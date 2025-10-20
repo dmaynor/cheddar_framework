@@ -1,2 +1,2 @@
 # cheddar_framework
-A PM/accountability fraeworj for AI enahced orgs to replace agile. 
+A PM/accountability framework for AI enhanced orgs to replace agile.
