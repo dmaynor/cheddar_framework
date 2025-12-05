@@ -15,16 +15,3 @@ The original blueprint notes were split into focused guides for easier navigatio
 - [`docs/embodiment.md`](docs/embodiment.md) — embodied QA and sensorimotor participation.
 
 Use these documents as the starting point for clarifying the domain model and designing artifact schemas.
-
-## Archived blueprint notes
-The original multi-part blueprint drafts now live in [`deprecated/`](deprecated/) as historical references:
-- [`deprecated/cheddar_blueprint_v1_part1.md`](deprecated/cheddar_blueprint_v1_part1.md)
-- [`deprecated/cheddar_blueprint_v1_part2.md`](deprecated/cheddar_blueprint_v1_part2.md)
-- [`deprecated/cheddar_blueprint_v1_part3.md`](deprecated/cheddar_blueprint_v1_part3.md)
-- [`deprecated/cheddar_blueprint_v1_part4.md`](deprecated/cheddar_blueprint_v1_part4.md)
-- [`deprecated/cheddar_blueprint_v1_part6.md`](deprecated/cheddar_blueprint_v1_part6.md)
-- [`deprecated/cheddar_blueprint_v1_part7.md`](deprecated/cheddar_blueprint_v1_part7.md)
-- [`deprecated/cheddar_blueprint_v1_part7a.md`](deprecated/cheddar_blueprint_v1_part7a.md)
-- [`deprecated/cheddar_blueprint_v1_part7b.md`](deprecated/cheddar_blueprint_v1_part7b.md)
-
-The `docs/` directory is the authoritative source for the reorganized content.
