@@ -1,0 +1,37 @@
+# Mission Definition Schema Example
+# Level: mission (root of artifact hierarchy)
+# Purpose: Define organizational intent and measurable success criteria
+#
+# Required fields: level, id, title, intent, success_criteria, authorized_roles, lineage
+# Optional fields: cheddar_state
+
+level: "mission"
+id: "mission_example_v1"
+title: "develop_best_vulnerability_scanner"
+intent: "Deliver a best-of-breed vulnerability scanner with superior accuracy and minimal false positives."
+
+success_criteria:
+  - metric: "market_share"
+    target: "maintain_or_grow"
+  - metric: "false_positive_rate"
+    target: "<2_percent"
+  - metric: "customer_satisfaction"
+    target: ">90_percent"
+
+authorized_roles:
+  - role_name: "board_of_directors"
+  - role_name: "ceo"
+
+cheddar_state: "active"  # One of: active, resolved, stinky
+
+lineage:
+  upstream_hash: null  # Mission is root; no upstream
+  hash: "sha256:a1b2c3d4e5f6..."  # Computed from artifact content
+  signed_by: "board_of_directors"
+  timestamp: "2026-01-06T00:00:00Z"
+
+# Bidirectional contract (optional but recommended)
+enables_lower_layer:
+  - "Flow initiatives for product quality"
+  - "Flow initiatives for market growth"
+  - "Flow initiatives for operational efficiency"
