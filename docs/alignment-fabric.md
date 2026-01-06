@@ -55,4 +55,4 @@ Each artifact documents how it **supports** the layer above and **enables** the 
 - `downward_contract`: Deliverables guaranteed downstream.
 
 ### Roles and Imports
-Authority is declared explicitly via imported role catalogs under `/roles/` [REQUIRED] so every contract has a signed owner.
+Authority is declared explicitly via imported role catalogs. The `/roles/` directory is `[REQUIRED]` but not yet implemented. Once created, every contract will reference a signed owner from the role catalog.
