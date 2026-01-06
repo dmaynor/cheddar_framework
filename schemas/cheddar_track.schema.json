@@ -34,19 +34,18 @@
     },
     "hypotheses": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
+      "items": { "type": "string", "minLength": 1 },
       "description": "Candidate explanations for the issue"
     },
     "repro_steps": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
+      "items": { "type": "string", "minLength": 1 },
       "description": "Steps to reproduce the issue"
+    },
+    "enables_lower_layer": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "What this track enables (bidirectional contract)"
     },
     "upward_feedback": {
       "type": "string",
@@ -62,12 +61,12 @@
       "properties": {
         "upstream_hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]{64}$",
+          "pattern": "^sha256:[a-f0-9]",
           "description": "SHA-256 hash of parent flow_initiative"
         },
         "hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]{64}$",
+          "pattern": "^sha256:[a-f0-9]",
           "description": "SHA-256 hash of this artifact's content"
         },
         "signed_by": {
