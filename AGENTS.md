@@ -60,9 +60,11 @@ Priorities, in this order:
 
 1. **Clarify the Cheddar mental model**
    - Extract & consolidate key ideas from existing docs into a small set of “core” documents:
-     - `docs/overview.md` — what Cheddar is and why it exists.
-     - `docs/domain-model.md` — entities and relationships.
-     - `docs/use-cases.md` — concrete workflows (board, exec, IC/engineer, AI agent).
+     - `docs/overview.md` — what Cheddar is and why it exists. [EXISTS]
+     - `docs/domain-model.md` — entities and relationships. [PLANNED]
+     - `docs/use-cases.md` — concrete workflows (board, exec, IC/engineer, AI agent). [PLANNED]
+     - `docs/invariants.md` — core guarantees Cheddar aims to enforce. [PLANNED]
+     - `docs/roadmap.md` — phased implementation ideas. [PLANNED]
 
 2. **Define canonical artifact formats**
    - Propose 1–3 canonical artifact schemas, e.g.:
@@ -77,7 +79,7 @@ Priorities, in this order:
      - Every artifact has a stable ID and a version.
      - Artifacts have explicit upstream/downstream references.
      - There is a defined place for cryptographic material (hashes, signatures, etc.).
-   - Put these in `docs/invariants.md`.
+   - Put these in `docs/invariants.md` [PLANNED].
 
 4. **Only then: start thin, composable tooling**
    - Small, clear utilities to:
@@ -89,57 +91,38 @@ Priorities, in this order:
 
 ## 4. Languages, Style, and Coding Expectations
 
-Code will eventually exist here. When you add code:
-
-- **Default language:** Python 3.11+.
-- **Style:** PEP 8, type-annotated, with full docstrings that explain:
-  - What the function/module does.
-  - Input/output types and formats.
-  - Any assumptions or side effects.
-
-- **Testing:**
-  - Use `pytest`.
-  - Prefer small, deterministic tests.
-  - Where possible, drive tests with **example Cheddar artifacts** stored in a `fixtures/` directory.
-
-- **YAML/JSON artifacts:**
-  - Be strict and predictable:
-    - Avoid clever magic keys.
-    - Make fields explicit (no implicit “magic default” behavior).
-  - Where you introduce fields, document them in `docs/domain-model.md` or an appropriate schema doc.
-
-- **Interfaces:**
-  - Prefer **pure functions and small CLIs** over complex frameworks at this stage.
-  - Any CLIs should:
-    - Accept input files/directories of artifacts.
-    - Emit JSON/YAML or markdown reports, not opaque binary blobs.
+The language, style, testing, YAML/JSON strictness, and interface guidelines remain the same as previously stated.
 
 ---
 
 ## 5. Directory and File Conventions
 
-Agents SHOULD steer towards the following structure (even if not all of it exists yet):
+Agents SHOULD steer towards the following structure (even if not all of it exists yet). Use the markers `[EXISTS]`, `[REQUIRED]`, and `[PLANNED]` to indicate status.
 
 - `docs/`
-  - `overview.md` — human-friendly intro to Cheddar.
-  - `domain-model.md` — entities, relationships, key fields.
-  - `use-cases.md` — example workflows.
-  - `invariants.md` — core guarantees Cheddar aims to enforce.
-  - `roadmap.md` — phased implementation ideas.
+  - `overview.md` — human-friendly intro to Cheddar. [EXISTS]
+  - `domain-model.md` — entities, relationships, key fields. [PLANNED]
+  - `use-cases.md` — example workflows. [PLANNED]
+  - `invariants.md` — core guarantees Cheddar aims to enforce. [PLANNED]
+  - `roadmap.md` — phased implementation ideas. [PLANNED]
 
-- `schemas/`
-  - `cheddar_mission.example.yaml`
-  - `cheddar_initiative.example.yaml`
-  - `cheddar_task.example.yaml`
-  - `cheddar_evidence.example.yaml`
+- `schemas/` [PLANNED]
+  - `cheddar_mission.example.yaml` [PLANNED]
+  - `cheddar_initiative.example.yaml` [PLANNED]
+  - `cheddar_task.example.yaml` [PLANNED]
+  - `cheddar_evidence.example.yaml` [PLANNED]
 
-- `examples/`
+- `examples/` [PLANNED]
   - End-to-end small story: mission → tasks → evidence → report.
 
-- `src/` (only when we’re ready for code)
+- `src/` (only when we’re ready for code) [PLANNED]
   - `cheddar/` package with small, composable modules.
-- `tests/`
+
+- `tests/` [PLANNED]
   - Mirrors `src/cheddar/` structure with unit tests.
+
+- `fixtures/` [PLANNED]
+  - Example artifacts used in tests.
 
 When modifying or creating files, **respect existing structure** and prefer extending it over inventing a conflicting pattern.
 
