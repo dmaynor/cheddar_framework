@@ -1,0 +1,39 @@
+# Personal Artifact Schema Example
+# Level: personal
+# Purpose: Individual-level work contracts inheriting context from upstream
+#
+# Required fields: level, id, title, supports_upper_layer, responsible_party, acceptance_criteria, cheddar_state, lineage
+# Optional fields: due_date, notes
+
+level: "personal"
+id: "personal_train_model_alice_v1"
+title: "execute_model_retraining_pipeline"
+
+supports_upper_layer: "brief_retrain_classifier_v1"  # Reference to parent brief
+
+responsible_party: "alice_ml_engineer"  # Individual accountable
+
+acceptance_criteria:
+  - "Training pipeline executed successfully"
+  - "Model weights uploaded to artifact store"
+  - "ROC curve report generated and attached"
+  - "All regression tests passing"
+  - "Signed completion acknowledgement recorded"
+
+due_date: "2026-01-10T17:00:00Z"
+
+cheddar_state: "active"  # Required for personal artifacts
+
+lineage:
+  upstream_hash: "sha256:d4e5f6a7b8c9..."  # Must match parent's lineage.hash
+  hash: "sha256:e5f6a7b8c9d0..."
+  signed_by: "alice_ml_engineer"
+  timestamp: "2026-01-06T04:00:00Z"
+
+# Personal artifacts are terminal; no enables_lower_layer
+# Feedback flows upward via completion status and attached evidence
+
+notes: |
+  Use the 2025-10 telemetry dataset from s3://ml-data/telemetry/2025-10/
+  Follow the retraining runbook at /docs/runbooks/model-retrain.md
+  Notify #ml-platform channel when complete
