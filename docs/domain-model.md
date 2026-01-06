@@ -233,7 +233,7 @@ mission_definition
 - **Downward:** Intent flows from mission to personal artifacts
 - **Upward:** Evidence and feedback flow from execution to mission
 
-**Invariant:** The artifact hierarchy is canonical. Intent graphs are derived views computed from artifact relationships, not a separate data structure.
+**Invariant:** The artifact hierarchy is canonical. Intent graphs are derived views computed from artifact relationships, not a separate data structure. See [ADR-001](adr/ADR-001-hierarchy-is-canonical.md) for rationale.
 
 ---
 
