@@ -1,0 +1,54 @@
+# Automation Brief Schema Example
+# Level: automation_brief
+# Purpose: Executable, testable contract binding human sign-off to automation
+#
+# Required fields: level, id, title, supports_upper_layer, owner, deliverables, tests, lineage
+# Optional fields: change_management, cheddar_state
+
+level: "automation_brief"
+id: "brief_retrain_classifier_v1"
+title: "retrain_model_with_recent_telemetry"
+
+supports_upper_layer: "track_classifier_threshold_drift_v1"  # Reference to parent track
+
+owner: "ml_platform_lead"  # Principal worker accountable for this automation
+
+deliverables:
+  - "Updated model weights trained on 2025-10 telemetry"
+  - "Passing regression tests with new weights"
+  - "ROC curve comparison report"
+  - "Rollback package if needed"
+
+tests:
+  - name: "false_positive_rate_below_2_percent"
+    type: "metric_threshold"
+    target: "<0.02"
+  - name: "precision_above_95_percent"
+    type: "metric_threshold"
+    target: ">0.95"
+  - name: "no_regression_on_known_vulns"
+    type: "test_suite"
+    target: "100%_pass"
+
+change_management:
+  approvals_required:
+    - role: "vp_of_engineering"
+    - role: "security_officer"
+  rollback_plan: "Revert to prior model weights if precision drops below 90%"
+  canary_percentage: 5
+  canary_duration_hours: 24
+
+cheddar_state: "active"
+
+lineage:
+  upstream_hash: "sha256:c3d4e5f6a7b8..."  # Must match parent's lineage.hash
+  hash: "sha256:d4e5f6a7b8c9..."
+  signed_by: "ml_platform_lead"
+  timestamp: "2026-01-06T03:00:00Z"
+
+# Bidirectional contract
+enables_lower_layer:
+  - "Personal artifacts for team members executing retraining"
+  - "Run evidence from automation execution"
+
+upward_feedback: "Report completion status and metric deltas to cheddar_track"
