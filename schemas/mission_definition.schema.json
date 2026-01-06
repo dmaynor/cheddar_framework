@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/dmaynor/cheddar_framework/schemas/mission_definition.schema.json",
+  "title": "Mission Definition",
+  "description": "Highest-level artifact defining organizational intent and success criteria",
+  "type": "object",
+
+  "properties": {
+    "level": {
+      "type": "string",
+      "const": "mission",
+      "description": "Artifact type identifier"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^mission_[a-z0-9_]+_v[0-9]+$",
+      "description": "Stable unique identifier",
+      "examples": ["mission_qa_excellence_v1"]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Snake_case identifier for the mission"
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Natural language statement of organizational purpose"
+    },
+    "success_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "description": "Measurable outcomes that define success"
+    },
+    "authorized_roles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "description": "Roles permitted to modify this artifact"
+    },
+    "cheddar_state": {
+      "type": "string",
+      "enum": ["active", "resolved", "stinky"],
+      "description": "Artifact lifecycle state"
+    },
+    "lineage": {
+      "type": "object",
+      "properties": {
+        "upstream_hash": {
+          "type": "null",
+          "description": "Must be null for mission (root of chain)"
+        },
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 hash of this artifact's content"
+        },
+        "signed_by": {
+          "type": "string",
+          "description": "Role or identity that signed this artifact"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Signing timestamp"
+        }
+      },
+      "required": ["upstream_hash", "hash", "timestamp"],
+      "additionalProperties": false
+    }
+  },
+
+  "required": [
+    "level",
+    "id",
+    "title",
+    "intent",
+    "success_criteria",
+    "authorized_roles",
+    "lineage"
+  ],
+  "additionalProperties": false
+}
