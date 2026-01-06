@@ -28,12 +28,12 @@ automation_brief:
 ```yaml
 session_context:
   load_from:
-    - "../artifacts/mission_definition.yaml"
-    - "../artifacts/flow_initiative.yaml"
-    - "../artifacts/cheddar_track.yaml"
-    - "../artifacts/automation_brief.yaml"
+    - "../artifacts/mission_definition.yaml"   # [REQUIRED]
+    - "../artifacts/flow_initiative.yaml"      # [REQUIRED]
+    - "../artifacts/cheddar_track.yaml"        # [REQUIRED]
+    - "../artifacts/automation_brief.yaml"     # [REQUIRED]
   merge_order: "top_to_bottom"
-  output_prompt: "session_prompt.yaml"
+  output_prompt: "session_prompt.yaml"         # [PLANNED]
 ```
 
 Use a helper such as:
@@ -44,6 +44,7 @@ build_context_chain --mission mission_definition.yaml \
                     --automation automation_brief.yaml \
                     --output session_prompt.yaml
 ```
+*[PLANNED]: `build_context_chain` is a planned helper; `session_prompt.yaml` illustrates an example output and does not currently exist.*
 
 ### Bidirectional Contracts
 Each artifact documents how it **supports** the layer above and **enables** the layer below:
@@ -54,4 +55,4 @@ Each artifact documents how it **supports** the layer above and **enables** the 
 - `downward_contract`: Deliverables guaranteed downstream.
 
 ### Roles and Imports
-Authority is declared explicitly via imported role catalogs under `/roles/` so every contract has a signed owner.
+Authority is declared explicitly via imported role catalogs under `/roles/` [REQUIRED] so every contract has a signed owner.
