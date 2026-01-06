@@ -1,0 +1,455 @@
+# Cheddar Framework - Ground Truth Audit
+# Phase 0 of refactor plan
+# Generated: 2026-01-06
+# Auditor: claude (automated)
+#
+# Purpose: Establish single source of truth about what exists vs. what is claimed.
+# Rule: No semantic meaning changes during this refactor.
+
+audit_metadata:
+  date: "2026-01-06"
+  phase: 0
+  purpose: "Ground truth audit - stop lying to ourselves"
+  auditor: "claude"
+  freeze_semantics: true  # No meaning changes, only truth alignment
+
+# =============================================================================
+# SECTION 1: What Actually Exists
+# =============================================================================
+
+existing_files:
+  root:
+    - path: "AGENTS.md"
+      purpose: "Agent/codegen guidance"
+      status: exists
+    - path: "README.md"
+      purpose: "Repository entry point and documentation map"
+      status: exists
+    - path: "LICENSE"
+      purpose: "MIT license"
+      status: exists
+    - path: ".gitignore"
+      purpose: "Git ignore patterns"
+      status: exists
+    - path: "prkin.py"
+      purpose: "Separate tool - PR to Gherkin generator"
+      status: exists
+      note: "Not Cheddar core; future implementation target"
+
+  docs:
+    - path: "docs/overview.md"
+      purpose: "Framework overview and philosophy"
+      status: exists
+    - path: "docs/alignment-fabric.md"
+      purpose: "Context assembly and combined_context.yaml"
+      status: exists
+    - path: "docs/artifact-hierarchy.md"
+      purpose: "Mission → Initiative → Track → Brief → Personal chain"
+      status: exists
+    - path: "docs/documentation-governance.md"
+      purpose: "Append-only logging and lineage rules"
+      status: exists
+    - path: "docs/personal-artifacts.md"
+      purpose: "Individual-level artifact patterns"
+      status: exists
+    - path: "docs/ai-integration.md"
+      purpose: "AI participation and safeguards"
+      status: exists
+    - path: "docs/governance-ethics.md"
+      purpose: "Ethical guardrails and policy enforcement"
+      status: exists
+    - path: "docs/intent-graphs.md"
+      purpose: "Ticket replacement with intent nodes"
+      status: exists
+    - path: "docs/embodiment.md"
+      purpose: "Sensorimotor QA patterns"
+      status: exists
+
+existing_directories:
+  - path: "docs/"
+    status: exists
+    contents: 9 markdown files
+
+# =============================================================================
+# SECTION 2: What Is Referenced But Does Not Exist
+# =============================================================================
+
+referenced_not_exists:
+  # Directories marked [REQUIRED] in governance-ethics.md
+  - path: "roles/"
+    referenced_in:
+      - "docs/governance-ethics.md"
+      - "docs/alignment-fabric.md"
+    classification: planned_not_implemented
+    marker_in_docs: "[REQUIRED]"
+    purpose: "Authority catalog for role-based signing"
+    blocking: true
+    
+  - path: "artifacts/"
+    referenced_in:
+      - "docs/governance-ethics.md"
+      - "docs/alignment-fabric.md"
+    classification: planned_not_implemented
+    marker_in_docs: "[REQUIRED]"
+    purpose: "Signed contract storage"
+    blocking: true
+    
+  - path: "lint/"
+    referenced_in:
+      - "docs/governance-ethics.md"
+    classification: planned_not_implemented
+    marker_in_docs: "[REQUIRED]"
+    purpose: "Verification scripts"
+    blocking: true
+    
+  - path: "ai_audit/"
+    referenced_in:
+      - "docs/governance-ethics.md"
+    classification: planned_not_implemented
+    marker_in_docs: "[REQUIRED]"
+    purpose: "AI session logs"
+    blocking: true
+    
+  - path: "governance/"
+    referenced_in:
+      - "docs/governance-ethics.md"
+    classification: planned_not_implemented
+    marker_in_docs: "[REQUIRED]"
+    purpose: "policy.yaml and enforcement rules"
+    blocking: true
+
+  # Directories referenced in AGENTS.md
+  - path: "schemas/"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "Canonical artifact schemas and examples"
+    blocking: true
+    expected_contents:
+      - "cheddar_mission.example.yaml"
+      - "cheddar_initiative.example.yaml"
+      - "cheddar_task.example.yaml"
+      - "cheddar_evidence.example.yaml"
+    
+  - path: "examples/"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "End-to-end example workflows"
+    blocking: false
+    
+  - path: "src/"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "Python package when code is added"
+    blocking: false
+    note: "AGENTS.md says 'only when ready for code'"
+    
+  - path: "tests/"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "pytest tests mirroring src/"
+    blocking: false
+    
+  - path: "fixtures/"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "Example Cheddar artifacts for testing"
+    blocking: false
+
+# Files referenced but not existing
+  - path: "docs/domain-model.md"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "Formal entity definitions and relationships"
+    blocking: true
+    note: "AGENTS.md lists this as priority deliverable"
+    
+  - path: "docs/invariants.md"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "Non-negotiable rules"
+    blocking: true
+    note: "Invariants currently scattered across multiple docs"
+    
+  - path: "docs/use-cases.md"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "Concrete workflows by persona"
+    blocking: false
+    
+  - path: "docs/roadmap.md"
+    referenced_in:
+      - "AGENTS.md"
+    classification: planned_not_implemented
+    marker_in_docs: null
+    purpose: "Phased implementation plan"
+    blocking: false
+
+# =============================================================================
+# SECTION 3: Tools/Helpers Referenced But Not Implemented
+# =============================================================================
+
+tools_not_implemented:
+  - name: "build_context_chain"
+    referenced_in:
+      - "docs/alignment-fabric.md"
+    classification: planned_not_implemented
+    marker_in_docs: "[PLANNED]"
+    purpose: "CLI to merge artifact chain into session_prompt.yaml"
+    note: "Correctly marked as planned in the doc"
+    
+  - name: "session_prompt.yaml"
+    referenced_in:
+      - "docs/alignment-fabric.md"
+    classification: example_output
+    marker_in_docs: "[PLANNED]"
+    purpose: "Example output of build_context_chain"
+    note: "Correctly marked as example/planned"
+
+# =============================================================================
+# SECTION 4: Terminology Inconsistencies
+# =============================================================================
+
+terminology_issues:
+  - term: "Cheddar"
+    usages:
+      - context: "Framework name"
+        location: "README.md, docs/overview.md"
+        meaning: "The complete methodology"
+      - context: "Artifact type"
+        location: "docs/artifact-hierarchy.md"
+        meaning: "cheddar_track.yaml - reproducible problem artifact"
+      - context: "Metric"
+        location: "docs/documentation-governance.md"
+        meaning: "cheddar_stats - count of detected problems"
+      - context: "State"
+        location: "docs/documentation-governance.md, docs/personal-artifacts.md"
+        meaning: "cheddar_state - active/resolved/stinky"
+    recommendation: "Define in domain-model.md with explicit disambiguation"
+    
+  - term: "intent"
+    usages:
+      - context: "Mission field"
+        location: "docs/artifact-hierarchy.md"
+        meaning: "Organizational purpose statement"
+      - context: "Intent node"
+        location: "docs/intent-graphs.md"
+        meaning: "Living statement of purpose replacing tickets"
+    recommendation: "Clarify relationship; intent_node extends mission intent"
+
+  - term: "objective" vs "intent"
+    usages:
+      - context: "flow_initiative"
+        location: "docs/artifact-hierarchy.md"
+        field_name: "objective"
+      - context: "mission_definition"
+        location: "docs/artifact-hierarchy.md"
+        field_name: "intent"
+    recommendation: "Standardize or document semantic difference"
+
+# =============================================================================
+# SECTION 5: Schema Field Inconsistencies
+# =============================================================================
+
+field_inconsistencies:
+  - field: "level"
+    present_in:
+      - "docs/artifact-hierarchy.md"
+    absent_in:
+      - "docs/alignment-fabric.md"
+      - "docs/personal-artifacts.md"
+    recommendation: "Add to all artifact examples"
+    
+  - field: "cheddar_state"
+    present_in:
+      - "docs/documentation-governance.md"
+      - "docs/personal-artifacts.md"
+    absent_in:
+      - "docs/artifact-hierarchy.md"
+    recommendation: "Add to canonical artifact definitions"
+    
+  - field: "supports_upper_layer"
+    present_in:
+      - "docs/artifact-hierarchy.md"
+      - "docs/personal-artifacts.md"
+    absent_in:
+      - "docs/alignment-fabric.md (uses 'mission_definition.title' instead)"
+    recommendation: "Standardize upstream reference field name"
+
+  - field: "lineage/hash"
+    mentioned_in:
+      - "docs/overview.md (conceptually)"
+      - "docs/governance-ethics.md (conceptually)"
+      - "docs/documentation-governance.md (conceptually)"
+    defined_in: null
+    recommendation: "Define explicit lineage block structure in schemas"
+
+# =============================================================================
+# SECTION 6: Invariants Currently Scattered
+# =============================================================================
+
+scattered_invariants:
+  - invariant: "Every artifact has stable ID and version"
+    location: "Implied but never stated"
+    target: "docs/invariants.md"
+    
+  - invariant: "Documentation logs are append-only"
+    location: "docs/documentation-governance.md"
+    target: "docs/invariants.md"
+    
+  - invariant: "Human signatures required for production changes"
+    location: "docs/ai-integration.md"
+    target: "docs/invariants.md"
+    
+  - invariant: "AI cannot bypass policy"
+    location: "docs/governance-ethics.md"
+    target: "docs/invariants.md"
+    
+  - invariant: "Context is immutable for session duration"
+    location: "docs/ai-integration.md"
+    target: "docs/invariants.md"
+    
+  - invariant: "Every automation has a human owner"
+    location: "docs/governance-ethics.md"
+    target: "docs/invariants.md"
+    
+  - invariant: "Artifacts have explicit upstream/downstream references"
+    location: "docs/alignment-fabric.md"
+    target: "docs/invariants.md"
+    
+  - invariant: "Cryptographic lineage hashes are verified"
+    location: "docs/governance-ethics.md"
+    target: "docs/invariants.md"
+
+# =============================================================================
+# SECTION 7: Document Status Summary
+# =============================================================================
+
+document_status:
+  truthful:
+    - "docs/overview.md"
+    - "docs/artifact-hierarchy.md"
+    - "docs/embodiment.md"
+    - "docs/intent-graphs.md"
+    - "AGENTS.md"
+    - "README.md"
+    
+  contains_false_claims:
+    - path: "docs/governance-ethics.md"
+      false_claims:
+        - "roles/ directory exists [REQUIRED]"
+        - "artifacts/ directory exists [REQUIRED]"
+        - "lint/ directory exists [REQUIRED]"
+        - "ai_audit/ directory exists [REQUIRED]"
+        - "governance/ directory exists [REQUIRED]"
+      note: "Markers say [REQUIRED] which implies must exist, not does exist"
+      
+    - path: "docs/alignment-fabric.md"
+      false_claims:
+        - "build_context_chain helper exists"
+      note: "Correctly marked [PLANNED] but could be clearer"
+
+# =============================================================================
+# SECTION 8: Blocking Issues for Phase 1
+# =============================================================================
+
+blocking_issues:
+  critical:
+    - issue: "No domain-model.md"
+      impact: "Cannot validate artifact structure"
+      resolution: "Create docs/domain-model.md"
+      
+    - issue: "No schemas/ directory"
+      impact: "Cannot programmatically validate artifacts"
+      resolution: "Create schemas/ with canonical examples"
+      
+    - issue: "No invariants.md"
+      impact: "Rules scattered, not auditable"
+      resolution: "Extract to docs/invariants.md"
+      
+    - issue: "Terminology overloading ('Cheddar')"
+      impact: "Reader confusion, implementation ambiguity"
+      resolution: "Define terms in domain-model.md"
+
+  high:
+    - issue: "Required directories don't exist"
+      impact: "Docs claim enforcement that isn't real"
+      resolution: "Create stubs OR fix doc claims"
+      
+    - issue: "Field inconsistencies across docs"
+      impact: "Schema drift, validation impossible"
+      resolution: "Standardize in schemas/"
+
+  medium:
+    - issue: "Hierarchy vs intent-graph canonical source unclear"
+      impact: "Dual sources of truth"
+      resolution: "Declare one canonical in docs/domain-model.md"
+
+# =============================================================================
+# SECTION 9: Recommended Phase 1 Actions
+# =============================================================================
+
+phase_1_actions:
+  immediate:
+    - action: "Create docs/domain-model.md"
+      priority: 1
+      effort: "medium"
+      
+    - action: "Create docs/invariants.md"
+      priority: 2
+      effort: "low"
+      
+    - action: "Create schemas/ directory with example files"
+      priority: 3
+      effort: "medium"
+      
+    - action: "Fix governance-ethics.md false claims"
+      priority: 4
+      effort: "low"
+      options:
+        - "Change [REQUIRED] to [PLANNED] with explanation"
+        - "Create stub directories with README files"
+
+  near_term:
+    - action: "Standardize field names across all docs"
+      priority: 5
+      effort: "medium"
+      
+    - action: "Add status markers [EXISTS]/[REQUIRED]/[PLANNED] to all path references"
+      priority: 6
+      effort: "low"
+
+# =============================================================================
+# AUDIT COMPLETE
+# =============================================================================
+
+audit_summary:
+  files_exist: 14
+  directories_exist: 1
+  directories_missing: 10
+  files_missing: 4
+  terminology_issues: 2
+  field_inconsistencies: 4
+  scattered_invariants: 8
+  blocking_issues_critical: 4
+  blocking_issues_high: 2
+  blocking_issues_medium: 1
+  
+  verdict: "Phase 0.5 - Concept exists, specification incomplete"
+  
+  meta_rule: "Cheddar must never claim reality it cannot enforce."
