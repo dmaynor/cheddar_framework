@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/dmaynor/cheddar_framework/schemas/documentation_log.schema.json",
+  "title": "Documentation Log",
+  "description": "Append-only record of progress, blockers, and decisions",
+  "type": "object",
+
+  "properties": {
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of last update"
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human or AI identifier who made the last update"
+    },
+    "artifact_ref": {
+      "type": "string",
+      "pattern": "^(mission|flow|track|brief|personal)_[a-z0-9_]+_v[0-9]+$",
+      "description": "ID of the artifact this log documents"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/log_entry"
+      },
+      "minItems": 1,
+      "description": "Ordered log entries (append-only)"
+    }
+  },
+
+  "required": ["last_updated", "author", "entries"],
+  "additionalProperties": false,
+
+  "definitions": {
+    "log_entry": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date of this entry"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Brief description of progress"
+        },
+        "what_we_are_doing": {
+          "type": "string",
+          "description": "Current focus of work"
+        },
+        "how_we_are_doing_it": {
+          "type": "string",
+          "description": "Approach or methodology being used"
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Current impediments to progress"
+        },
+        "cheddar_stats": {
+          "type": "object",
+          "properties": {
+            "total_cheddars_detected": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total problems identified"
+            },
+            "aligned_cheddars": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Problems with clear upstream traceability"
+            },
+            "stinky_cheddars": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Problems without resolution path"
+            }
+          },
+          "required": ["total_cheddars_detected", "aligned_cheddars", "stinky_cheddars"],
+          "additionalProperties": false,
+          "description": "Problem detection metrics"
+        },
+        "cheddar_state": {
+          "type": "string",
+          "enum": ["active", "resolved", "stinky"],
+          "description": "Current state of the documented work"
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Planned actions"
+        }
+      },
+      "required": ["date", "summary"],
+      "additionalProperties": false
+    }
+  }
+}
