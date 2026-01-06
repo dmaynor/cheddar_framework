@@ -34,17 +34,18 @@
     },
     "acceptance_criteria": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
+      "items": { "type": "string", "minLength": 1 },
       "minItems": 1,
       "description": "Conditions for completion"
     },
     "due_date": {
       "type": "string",
-      "format": "date",
+      "format": "date-time",
       "description": "Target completion date (ISO 8601)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional context or instructions"
     },
     "cheddar_state": {
       "type": "string",
@@ -56,12 +57,12 @@
       "properties": {
         "upstream_hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]{64}$",
+          "pattern": "^sha256:[a-f0-9]",
           "description": "SHA-256 hash of parent artifact"
         },
         "hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]{64}$",
+          "pattern": "^sha256:[a-f0-9]",
           "description": "SHA-256 hash of this artifact's content"
         },
         "signed_by": {
