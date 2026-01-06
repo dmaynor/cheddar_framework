@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/dmaynor/cheddar_framework/schemas/personal_artifact.schema.json",
+  "title": "Personal Artifact",
+  "description": "Individual-level work contracts inheriting context from automation briefs or policies",
+  "type": "object",
+
+  "properties": {
+    "level": {
+      "type": "string",
+      "const": "personal",
+      "description": "Artifact type identifier"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^personal_[a-z0-9_]+_v[0-9]+$",
+      "description": "Stable unique identifier",
+      "examples": ["personal_alice_implement_prkin_v1"]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Snake_case identifier"
+    },
+    "supports_upper_layer": {
+      "type": "string",
+      "pattern": "^(brief|track|flow|mission)_[a-z0-9_]+_v[0-9]+$",
+      "description": "ID of parent artifact (typically automation_brief)"
+    },
+    "responsible_party": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Individual accountable for this work"
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "description": "Conditions for completion"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target completion date (ISO 8601)"
+    },
+    "cheddar_state": {
+      "type": "string",
+      "enum": ["active", "resolved", "stinky"],
+      "description": "Artifact lifecycle state"
+    },
+    "lineage": {
+      "type": "object",
+      "properties": {
+        "upstream_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 hash of parent artifact"
+        },
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 hash of this artifact's content"
+        },
+        "signed_by": {
+          "type": "string",
+          "description": "Role or identity that signed this artifact"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Signing timestamp"
+        }
+      },
+      "required": ["upstream_hash", "hash", "timestamp"],
+      "additionalProperties": false
+    }
+  },
+
+  "required": [
+    "level",
+    "id",
+    "title",
+    "supports_upper_layer",
+    "responsible_party",
+    "acceptance_criteria",
+    "cheddar_state",
+    "lineage"
+  ],
+  "additionalProperties": false
+}
