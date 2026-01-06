@@ -34,27 +34,22 @@
     },
     "constraints": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
+      "items": { "type": "string", "minLength": 1 },
       "description": "Guardrails and limitations"
     },
     "telemetry_signals": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
+      "items": { "type": "string", "minLength": 1 },
       "description": "Metrics to track progress"
     },
     "enables_lower_layer": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
-      "description": "What this initiative makes possible"
+      "items": { "type": "string", "minLength": 1 },
+      "description": "What this initiative makes possible (bidirectional contract)"
+    },
+    "upward_feedback": {
+      "type": "string",
+      "description": "Conditions triggering escalation to upper layer"
     },
     "cheddar_state": {
       "type": "string",
@@ -66,12 +61,12 @@
       "properties": {
         "upstream_hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]{64}$",
+          "pattern": "^sha256:[a-f0-9]",
           "description": "SHA-256 hash of parent mission_definition"
         },
         "hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]{64}$",
+          "pattern": "^sha256:[a-f0-9]",
           "description": "SHA-256 hash of this artifact's content"
         },
         "signed_by": {
