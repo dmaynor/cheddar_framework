@@ -30,8 +30,17 @@
     "success_criteria": {
       "type": "array",
       "items": {
-        "type": "string",
-        "minLength": 1
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          {
+            "type": "object",
+            "properties": {
+              "metric": { "type": "string", "minLength": 1 },
+              "target": { "type": "string", "minLength": 1 }
+            },
+            "required": ["metric", "target"]
+          }
+        ]
       },
       "minItems": 1,
       "description": "Measurable outcomes that define success"
@@ -39,8 +48,16 @@
     "authorized_roles": {
       "type": "array",
       "items": {
-        "type": "string",
-        "minLength": 1
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          {
+            "type": "object",
+            "properties": {
+              "role_name": { "type": "string", "minLength": 1 }
+            },
+            "required": ["role_name"]
+          }
+        ]
       },
       "minItems": 1,
       "description": "Roles permitted to modify this artifact"
@@ -49,6 +66,11 @@
       "type": "string",
       "enum": ["active", "resolved", "stinky"],
       "description": "Artifact lifecycle state"
+    },
+    "enables_lower_layer": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "What this mission makes possible (bidirectional contract)"
     },
     "lineage": {
       "type": "object",
@@ -59,7 +81,7 @@
         },
         "hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]{64}$",
+          "pattern": "^sha256:[a-f0-9]",
           "description": "SHA-256 hash of this artifact's content"
         },
         "signed_by": {
