@@ -1,0 +1,74 @@
+# Cheddar Framework - Python Package Configuration
+# Status: [PLANNED] - Package not yet implemented
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cheddar-framework"
+version = "0.1.0-dev"
+description = "Accountability framework for AI-augmented organizations"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "David Maynor", email = "dmaynor@gmail.com"}
+]
+keywords = ["accountability", "ai", "governance", "artifacts", "lineage"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "pyyaml>=6.0",
+    "jsonschema>=4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+]
+all = [
+    "cheddar-framework[dev]",
+]
+
+[project.urls]
+Homepage = "https://github.com/dmaynor/cheddar_framework"
+Documentation = "https://github.com/dmaynor/cheddar_framework/tree/main/docs"
+Repository = "https://github.com/dmaynor/cheddar_framework"
+Issues = "https://github.com/dmaynor/cheddar_framework/issues"
+
+[project.scripts]
+cheddar = "cheddar.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+# Note: This file is a placeholder. The actual package implementation
+# is planned but not yet present in src/cheddar/.
