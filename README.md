@@ -41,7 +41,7 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 | JSON Schema definitions | `[EXISTS]` | `schemas/*.schema.json` |
 | Conceptual docs | `[EXISTS]` | `docs/` |
 | Architecture decisions | `[EXISTS]` | `docs/adr/` |
-| Validation tooling | `[PLANNED]` | `lint/` |
+| Validation tooling | `[EXISTS]` | `lint/` |
 | Example artifacts | `[PLANNED]` | `artifacts/` |
 | Python package | `[PLANNED]` | `src/` |
 
