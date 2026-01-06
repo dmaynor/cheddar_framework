@@ -1,0 +1,41 @@
+# Flow Initiative Schema Example
+# Level: flow_initiative
+# Purpose: Translate mission into departmental/system objectives
+#
+# Required fields: level, id, title, supports_upper_layer, objective, lineage
+# Optional fields: constraints, telemetry_signals, enables_lower_layer, cheddar_state
+
+level: "flow_initiative"
+id: "flow_reduce_false_positives_v1"
+title: "reduce_false_positives"
+
+supports_upper_layer: "mission_example_v1"  # Reference to parent mission
+
+objective: "Lower false-positive rate below 2% while maintaining detection precision above 95%."
+
+constraints:
+  - "Maintain detection precision > 95%"
+  - "No additional licensing costs"
+  - "Changes must be backward compatible"
+
+telemetry_signals:
+  - "false_positive_rate"
+  - "precision"
+  - "mean_time_to_triage"
+  - "customer_escalation_count"
+
+cheddar_state: "active"
+
+lineage:
+  upstream_hash: "sha256:a1b2c3d4e5f6..."  # Must match parent's lineage.hash
+  hash: "sha256:b2c3d4e5f6a7..."
+  signed_by: "vp_of_engineering"
+  timestamp: "2026-01-06T01:00:00Z"
+
+# Bidirectional contract
+enables_lower_layer:
+  - "Cheddar tracks for classifier improvements"
+  - "Cheddar tracks for threshold tuning"
+  - "Cheddar tracks for feedback loop optimization"
+
+upward_feedback: "Escalate to mission review if false_positive_rate exceeds 5% for 30 days"
