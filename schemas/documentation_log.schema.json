@@ -6,32 +6,37 @@
   "type": "object",
 
   "properties": {
-    "last_updated": {
-      "type": "string",
-      "format": "date-time",
-      "description": "ISO 8601 UTC timestamp of last update"
-    },
-    "author": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Human or AI identifier who made the last update"
-    },
-    "artifact_ref": {
-      "type": "string",
-      "pattern": "^(mission|flow|track|brief|personal)_[a-z0-9_]+_v[0-9]+$",
-      "description": "ID of the artifact this log documents"
-    },
-    "entries": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/log_entry"
+    "documentation_log": {
+      "type": "object",
+      "properties": {
+        "last_updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 UTC timestamp of last update"
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human or AI identifier who made the last update"
+        },
+        "artifact_ref": {
+          "type": "string",
+          "pattern": "^(mission|flow|track|brief|personal)_[a-z0-9_]+_v[0-9]+$",
+          "description": "ID of the artifact this log documents"
+        },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/log_entry" },
+          "minItems": 1,
+          "description": "Ordered log entries (append-only)"
+        }
       },
-      "minItems": 1,
-      "description": "Ordered log entries (append-only)"
+      "required": ["last_updated", "author", "entries"],
+      "additionalProperties": false
     }
   },
 
-  "required": ["last_updated", "author", "entries"],
+  "required": ["documentation_log"],
   "additionalProperties": false,
 
   "definitions": {
@@ -58,10 +63,7 @@
         },
         "blockers": {
           "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
+          "items": { "type": "string", "minLength": 1 },
           "description": "Current impediments to progress"
         },
         "cheddar_stats": {
@@ -94,10 +96,7 @@
         },
         "next_steps": {
           "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
+          "items": { "type": "string", "minLength": 1 },
           "description": "Planned actions"
         }
       },
