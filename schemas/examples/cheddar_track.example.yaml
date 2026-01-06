@@ -1,0 +1,40 @@
+# Cheddar Track Schema Example
+# Level: cheddar_track
+# Purpose: Capture reproducible problems, hypotheses, and candidate improvements
+#
+# Required fields: level, id, title, supports_upper_layer, issue, lineage
+# Optional fields: hypotheses, repro_steps, upward_feedback, cheddar_state
+
+level: "cheddar_track"
+id: "track_classifier_threshold_drift_v1"
+title: "classifier_threshold_adjustment"
+
+supports_upper_layer: "flow_reduce_false_positives_v1"  # Reference to parent initiative
+
+issue: "Model threshold drift detected causing increased false positives in recent releases"
+
+hypotheses:
+  - "Threshold too aggressive on new dataset distribution"
+  - "Training data no longer representative of production traffic"
+  - "Feature drift in input signals not detected by monitoring"
+
+repro_steps:
+  - "Replay telemetry window 2025-10-01 to 2025-10-07"
+  - "Compare ROC curves against baseline from 2025-09-01"
+  - "Identify threshold delta between releases"
+  - "Validate with held-out test set"
+
+cheddar_state: "active"
+
+lineage:
+  upstream_hash: "sha256:b2c3d4e5f6a7..."  # Must match parent's lineage.hash
+  hash: "sha256:c3d4e5f6a7b8..."
+  signed_by: "ml_platform_lead"
+  timestamp: "2026-01-06T02:00:00Z"
+
+# Bidirectional contract
+upward_feedback: "Escalate if drift persists across 3 releases or precision drops below 90%"
+
+enables_lower_layer:
+  - "Automation brief for model retraining"
+  - "Automation brief for threshold auto-tuning"
