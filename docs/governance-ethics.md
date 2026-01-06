@@ -12,11 +12,13 @@ Governance is the immune system of the Cheddar Blueprint. It ensures autonomy, a
 | Accountability | Every automation has a human owner. | `principal_worker` required in every artifact. |
 
 ## Policy Enforcement Architecture
-- `roles/` — authority catalog.
-- `artifacts/` — signed contracts.
-- `lint/` — verification scripts.
-- `ai_audit/` — AI session logs.
-- `governance/` — `policy.yaml` defining enforcement rules.
+The following directories are **required** to enforce governance rules. They are not yet present in the repository and must be created and implemented.
+
+- `roles/` — authority catalog. [REQUIRED]
+- `artifacts/` — signed contracts. [REQUIRED]
+- `lint/` — verification scripts. [REQUIRED]
+- `ai_audit/` — AI session logs. [REQUIRED]
+- `governance/` — `policy.yaml` defining enforcement rules. [REQUIRED]
 
 ### Example `policy.yaml`
 ```yaml
