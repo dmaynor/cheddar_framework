@@ -27,6 +27,10 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 - [`docs/intent-graphs.md`](docs/intent-graphs.md) — replacing tickets with intent graph workflows
 - [`docs/embodiment.md`](docs/embodiment.md) — embodied QA and sensorimotor participation
 
+### Architecture Decisions
+- [`docs/adr/`](docs/adr/) — Architecture Decision Records
+- [`docs/adr/ADR-001-hierarchy-is-canonical.md`](docs/adr/ADR-001-hierarchy-is-canonical.md) — **Artifact hierarchy is canonical; intent graphs are derived views**
+
 ## Repository Status
 
 | Component | Status | Location |
@@ -34,8 +38,9 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 | Domain model | `[EXISTS]` | `docs/domain-model.md` |
 | Invariants | `[EXISTS]` | `docs/invariants.md` |
 | Schema examples | `[EXISTS]` | `schemas/examples/` |
+| JSON Schema definitions | `[EXISTS]` | `schemas/*.schema.json` |
 | Conceptual docs | `[EXISTS]` | `docs/` |
-| JSON Schema definitions | `[PLANNED]` | `schemas/` |
+| Architecture decisions | `[EXISTS]` | `docs/adr/` |
 | Validation tooling | `[PLANNED]` | `lint/` |
 | Example artifacts | `[PLANNED]` | `artifacts/` |
 | Python package | `[PLANNED]` | `src/` |
