@@ -1,0 +1,44 @@
+# Documentation Log Schema Example
+# Purpose: Append-only record of progress, blockers, and decisions
+#
+# Required fields: last_updated, author, entries
+# Entry required fields: date, summary
+# Entry optional fields: what_we_are_doing, how_we_are_doing_it, blockers, cheddar_stats, cheddar_state, next_steps
+
+documentation_log:
+  last_updated: "2026-01-06T12:00:00Z"  # ISO 8601 UTC
+  author: "alice_ml_engineer"
+
+  entries:
+    - date: "2026-01-06"
+      summary: "Started model retraining pipeline execution."
+      what_we_are_doing: "Executing retraining with 2025-10 telemetry dataset."
+      how_we_are_doing_it: "Using standard ML pipeline with GPU cluster allocation."
+      blockers: []
+      cheddar_stats:
+        total_cheddars_detected: 1
+        aligned_cheddars: 1
+        stinky_cheddars: 0
+      cheddar_state: "active"
+      next_steps:
+        - "Monitor training job progress"
+        - "Run validation suite on new weights"
+        - "Generate ROC comparison report"
+
+    - date: "2026-01-05"
+      summary: "Prepared training environment and validated dataset."
+      what_we_are_doing: "Setting up infrastructure for retraining."
+      how_we_are_doing_it: "Provisioned GPU nodes, validated telemetry data integrity."
+      blockers:
+        - "Waiting for S3 bucket permissions (resolved)"
+      cheddar_stats:
+        total_cheddars_detected: 1
+        aligned_cheddars: 1
+        stinky_cheddars: 0
+      cheddar_state: "active"
+      next_steps:
+        - "Begin training pipeline"
+
+# Invariant: Entries are append-only. Do not modify existing entries.
+# Invariant: Entries must be in reverse chronological order (newest first).
+# Note: AI assistants may append context summaries but never overwrite entries.
