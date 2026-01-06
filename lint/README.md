@@ -1,24 +1,24 @@
 # Lint Directory
 
-**Status:** `[REQUIRED]` — Structure defined, implementation pending
+**Status:** `[EXISTS]` — Core tools implemented
 
 ## Purpose
 
 This directory contains **verification scripts** that enforce Cheddar invariants. These are the mechanical guarantees that make Cheddar trustworthy.
 
-## Planned Contents
+## Contents
 
 ```
 lint/
 ├── README.md                    # This file
-├── validate_artifact.py         # [PLANNED] Schema validation
-├── compute_hash.py              # [PLANNED] Lineage hash computation
-├── verify_lineage.py            # [PLANNED] Chain integrity verification
+├── validate_artifact.py         # [EXISTS] Schema validation
+├── compute_hash.py              # [EXISTS] Lineage hash computation
+├── verify_lineage.py            # [EXISTS] Chain integrity verification
+├── run_all.py                   # [EXISTS] Run all linters
 ├── verify_signature.py          # [PLANNED] Cryptographic signature validation
 ├── validate_log.py              # [PLANNED] Documentation log validation
 ├── check_freshness.py           # [PLANNED] Staleness detection
-├── validate_state.py            # [PLANNED] State transition validation
-└── run_all.py                   # [PLANNED] Run all linters
+└── validate_state.py            # [PLANNED] State transition validation
 ```
 
 ## Invariant Enforcement Map
@@ -33,20 +33,41 @@ lint/
 | `check_freshness.py` | INV-011 |
 | `validate_state.py` | INV-041 |
 
-## Usage (Planned)
+## Usage
 
 ```bash
 # Validate single artifact
-python lint/validate_artifact.py artifacts/example/mission_qa_v1.yaml
+python lint/validate_artifact.py path/to/artifact.yaml
 
-# Validate entire chain
-python lint/verify_lineage.py artifacts/example/
+# Validate directory of artifacts
+python lint/validate_artifact.py schemas/examples/
 
-# Check all invariants
-python lint/run_all.py artifacts/
+# Validate recursively
+python lint/validate_artifact.py artifacts/ --recursive
 
-# Pre-commit hook
-python lint/run_all.py --staged
+# Compute hash for an artifact
+python lint/compute_hash.py path/to/artifact.yaml
+
+# Update artifact with computed hash
+python lint/compute_hash.py path/to/artifact.yaml --update
+
+# Verify existing hash
+python lint/compute_hash.py path/to/artifact.yaml --verify
+
+# Verify lineage chain
+python lint/verify_lineage.py schemas/examples/
+
+# Skip hash verification (only check references)
+python lint/verify_lineage.py schemas/examples/ --skip-hash
+
+# Run all checks on examples
+python lint/run_all.py --examples
+
+# Run all checks on custom directory
+python lint/run_all.py artifacts/ --recursive
+
+# Output as JSON
+python lint/validate_artifact.py artifact.yaml --json
 ```
 
 ## Exit Codes
