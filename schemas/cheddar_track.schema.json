@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/dmaynor/cheddar_framework/schemas/cheddar_track.schema.json",
+  "title": "Cheddar Track",
+  "description": "Captures reproducible problems, hypotheses, and candidate improvements",
+  "type": "object",
+
+  "properties": {
+    "level": {
+      "type": "string",
+      "const": "cheddar_track",
+      "description": "Artifact type identifier"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^track_[a-z0-9_]+_v[0-9]+$",
+      "description": "Stable unique identifier",
+      "examples": ["track_pr_coverage_gap_v1"]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Snake_case identifier"
+    },
+    "supports_upper_layer": {
+      "type": "string",
+      "pattern": "^flow_[a-z0-9_]+_v[0-9]+$",
+      "description": "ID of parent flow_initiative"
+    },
+    "issue": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Description of the problem"
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Candidate explanations for the issue"
+    },
+    "repro_steps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Steps to reproduce the issue"
+    },
+    "upward_feedback": {
+      "type": "string",
+      "description": "Conditions triggering escalation to upper layer"
+    },
+    "cheddar_state": {
+      "type": "string",
+      "enum": ["active", "resolved", "stinky"],
+      "description": "Artifact lifecycle state"
+    },
+    "lineage": {
+      "type": "object",
+      "properties": {
+        "upstream_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 hash of parent flow_initiative"
+        },
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 hash of this artifact's content"
+        },
+        "signed_by": {
+          "type": "string",
+          "description": "Role or identity that signed this artifact"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Signing timestamp"
+        }
+      },
+      "required": ["upstream_hash", "hash", "timestamp"],
+      "additionalProperties": false
+    }
+  },
+
+  "required": [
+    "level",
+    "id",
+    "title",
+    "supports_upper_layer",
+    "issue",
+    "lineage"
+  ],
+  "additionalProperties": false
+}
