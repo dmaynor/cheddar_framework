@@ -74,20 +74,29 @@ We are in **Phase 2: Stable Specification → Implementation Ready**.
 
 | Priority | Status | Location |
 |----------|--------|----------|
-| Validation tooling | `[PLANNED]` | `lint/` |
-| Hash computation | `[PLANNED]` | `lint/compute_hash.py` |
-| Chain verification | `[PLANNED]` | `lint/verify_lineage.py` |
 | CLI interface | `[PLANNED]` | `src/cheddar/cli.py` |
 | Use-case documentation | `[PLANNED]` | `docs/use-cases.md` |
 | End-to-end examples | `[PLANNED]` | `examples/` |
 
+### Completed
+
+| Priority | Status | Location |
+|----------|--------|----------|
+| Domain model | ✓ `[EXISTS]` | `docs/domain-model.md` |
+| Invariants | ✓ `[EXISTS]` | `docs/invariants.md` |
+| Schema examples | ✓ `[EXISTS]` | `schemas/examples/` |
+| JSON Schemas | ✓ `[EXISTS]` | `schemas/*.schema.json` |
+| Directory structure | ✓ `[EXISTS]` | All stub directories created |
+| Validation tooling | ✓ `[EXISTS]` | `lint/validate_artifact.py` |
+| Hash computation | ✓ `[EXISTS]` | `lint/compute_hash.py` |
+| Chain verification | ✓ `[EXISTS]` | `lint/verify_lineage.py` |
+
 ### Next Steps
 
-1. Implement `lint/validate_artifact.py` — schema validation
-2. Implement `lint/compute_hash.py` — lineage hash computation
-3. Implement `lint/verify_lineage.py` — chain integrity verification
-4. Create CLI wrapper in `src/cheddar/cli.py`
-5. Add pytest tests in `tests/`
+1. Create CLI wrapper in `src/cheddar/cli.py`
+2. Add pytest tests in `tests/`
+3. Document use cases in `docs/use-cases.md`
+4. Create end-to-end examples in `examples/`
 
 ---
 
@@ -148,7 +157,11 @@ The repository now has this structure. Status markers indicate implementation st
 - `ai_audit/` — AI session logs. `[REQUIRED]` stub exists
 
 ### Implementation
-- `lint/` — verification scripts. `[REQUIRED]` stub exists
+- `lint/` — verification scripts. `[EXISTS]`
+  - `validate_artifact.py` — schema validation `[EXISTS]`
+  - `compute_hash.py` — hash computation `[EXISTS]`
+  - `verify_lineage.py` — chain verification `[EXISTS]`
+  - `run_all.py` — orchestrator `[EXISTS]`
 - `src/cheddar/` — Python package. `[PLANNED]` stub exists
 - `tests/` — pytest tests. `[PLANNED]` stub exists
 - `examples/` — end-to-end workflows. `[PLANNED]` stub exists
