@@ -279,11 +279,11 @@ Version numbers increment on semantic changes to the artifact's intent or contra
 ## Schema Files
 
 Canonical schemas are defined in `/schemas/`:
-- `mission_definition.schema.yaml`
-- `flow_initiative.schema.yaml`
-- `cheddar_track.schema.yaml`
-- `automation_brief.schema.yaml`
-- `personal_artifact.schema.yaml`
-- `documentation_log.schema.yaml`
+- `mission_definition.schema.json`
+- `flow_initiative.schema.json`
+- `cheddar_track.schema.json`
+- `automation_brief.schema.json`
+- `personal_artifact.schema.json`
+- `documentation_log.schema.json`
 
 Example artifacts are in `/schemas/examples/`.
