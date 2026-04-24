@@ -1,6 +1,8 @@
 # Roles Directory
 
-**Status:** `[REQUIRED]` — Structure defined, implementation pending
+**Status:** `[PLANNED]` — Structure defined below; no role definitions have been authored yet. See [§ Next Steps](#next-steps).
+
+> Per the meta-invariant ("Cheddar must never claim reality it cannot enforce"), this directory currently contains only this specification. `lineage.signed_by` values in existing examples reference role names that are not yet backed by catalog entries or verifiable keys. INV-023 (signature verification) is documentary until signing lands (Tier 3).
 
 ## Purpose
 

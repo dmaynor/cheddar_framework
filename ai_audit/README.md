@@ -1,6 +1,8 @@
 # AI Audit Directory
 
-**Status:** `[REQUIRED]` — Structure defined, implementation pending
+**Status:** `[PLANNED]` — Structure defined below; no session logs have been authored yet. See [§ Next Steps](#next-steps).
+
+> Per the meta-invariant ("Cheddar must never claim reality it cannot enforce"), this directory currently contains only this specification. INV-030, INV-031, and INV-032 require a session runtime (Tier 3) before they become enforced rather than aspirational. Nothing is auto-logging today.
 
 ## Purpose
 
