@@ -1,6 +1,8 @@
 # Artifacts Directory
 
-**Status:** `[REQUIRED]` — Structure defined, implementation pending
+**Status:** `[PLANNED]` — Structure defined below; no production artifacts live here yet. See [§ Next Steps](#next-steps).
+
+> Canonical examples of each artifact type live in `/schemas/examples/` and are intended as templates. This directory is reserved for real, organization-owned artifacts once the Python package and CLI exist (Tier 1) and an end-to-end example chain lands (Tier 4).
 
 ## Purpose
 
