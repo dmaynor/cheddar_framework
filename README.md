@@ -14,6 +14,7 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 ### Core Reference (Start Here)
 - [`docs/domain-model.md`](docs/domain-model.md) — **canonical entity definitions, terminology, and relationships**
 - [`docs/invariants.md`](docs/invariants.md) — **non-negotiable rules and enforcement mechanisms**
+- [`docs/canonical-serialization.md`](docs/canonical-serialization.md) — **normative algorithm for computing `lineage.hash`**
 - [`schemas/`](schemas/) — **canonical artifact schemas and examples**
 
 ### Conceptual Guides
@@ -30,6 +31,7 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 ### Architecture Decisions
 - [`docs/adr/`](docs/adr/) — Architecture Decision Records
 - [`docs/adr/ADR-001-hierarchy-is-canonical.md`](docs/adr/ADR-001-hierarchy-is-canonical.md) — **Artifact hierarchy is canonical; intent graphs are derived views**
+- [`docs/adr/ADR-002-lineage-evolution.md`](docs/adr/ADR-002-lineage-evolution.md) — **Revisions, forks, schema migrations, and supersession**
 
 ## Repository Status
 

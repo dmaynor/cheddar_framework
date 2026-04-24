@@ -11,6 +11,7 @@ ADRs document significant architectural decisions along with their context and c
 | ADR | Title | Status | Date |
 |-----|-------|--------|------|
 | [ADR-001](ADR-001-hierarchy-is-canonical.md) | Artifact Hierarchy is Canonical | Accepted | 2026-01-06 |
+| [ADR-002](ADR-002-lineage-evolution.md) | Lineage Evolution — Revisions, Forks, and Schema Migrations | Accepted | 2026-04-24 |
 
 ## ADR Template
 
