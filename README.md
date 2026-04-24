@@ -31,12 +31,17 @@ Current CLI limitation: `cheddar lint` is a thin wrapper over `lint/run_all.py` 
 ### Core
 - docs/domain-model.md
 - docs/invariants.md
+- docs/canonical-serialization.md
 - schemas/
 
 ### Guides
 - docs/overview.md
 - docs/artifact-hierarchy.md
 - docs/ai-integration.md
+
+### Architecture Decisions
+- docs/adr/ADR-001-hierarchy-is-canonical.md
+- docs/adr/ADR-002-lineage-evolution.md
 
 ## Repository Status
 
