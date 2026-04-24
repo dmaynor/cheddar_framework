@@ -30,7 +30,7 @@ Every non-mission artifact MUST reference exactly one upstream artifact via `sup
 **Enforcement:** Reference resolution validation.
 
 ### INV-004: Lineage Hash Integrity
-Every artifact MUST include a `lineage.hash` computed from its content (excluding the hash field).
+Every artifact MUST include a `lineage.hash` computed from its content (excluding the hash field). The computation MUST follow [`docs/canonical-serialization.md`](canonical-serialization.md) (v1.0).
 
 **Enforcement:** Hash verification on load.
 
