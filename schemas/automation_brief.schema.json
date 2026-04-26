@@ -34,18 +34,26 @@
     },
     "deliverables": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
+      "items": { "type": "string", "minLength": 1 },
       "minItems": 1,
       "description": "Concrete outputs this automation produces"
     },
     "tests": {
       "type": "array",
       "items": {
-        "type": "string",
-        "minLength": 1
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "type": { "type": "string", "minLength": 1 },
+              "target": { "type": "string", "minLength": 1 }
+            },
+            "required": ["name", "type", "target"],
+            "additionalProperties": false
+          }
+        ]
       },
       "minItems": 1,
       "description": "Validation criteria for the deliverables"
@@ -56,17 +64,60 @@
         "approvals_required": {
           "type": "array",
           "items": {
-            "type": "string",
-            "minLength": 1
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              {
+                "type": "object",
+                "properties": {
+                  "role": { "type": "string", "minLength": 1 }
+                },
+                "required": ["role"],
+                "additionalProperties": false
+              }
+            ]
           },
           "description": "Roles that must approve changes"
         },
         "rollback_plan": {
           "type": "string",
           "description": "How to revert if automation fails"
+        },
+        "rollout": {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "enum": ["none", "canary", "blue_green", "phased"],
+              "description": "Deployment rollout strategy"
+            },
+            "canary_percentage": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Percentage exposed during canary rollout"
+            },
+            "canary_duration_hours": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Duration of canary observation window"
+            }
+          },
+          "required": ["strategy"],
+          "additionalProperties": false,
+          "description": "Rollout controls for automation changes"
         }
       },
-      "description": "Approval and rollback procedures"
+      "additionalProperties": false,
+      "description": "Approval, rollout, and rollback procedures"
+    },
+    "enables_lower_layer": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "What this brief enables (bidirectional contract)"
+    },
+    "upward_feedback": {
+      "type": "string",
+      "description": "Conditions triggering escalation to upper layer"
     },
     "cheddar_state": {
       "type": "string",
