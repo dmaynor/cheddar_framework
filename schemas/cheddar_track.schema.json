@@ -6,91 +6,29 @@
   "type": "object",
 
   "properties": {
-    "level": {
-      "type": "string",
-      "const": "cheddar_track",
-      "description": "Artifact type identifier"
-    },
-    "id": {
-      "type": "string",
-      "pattern": "^track_[a-z0-9_]+_v[0-9]+$",
-      "description": "Stable unique identifier",
-      "examples": ["track_pr_coverage_gap_v1"]
-    },
-    "title": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Snake_case identifier"
-    },
-    "supports_upper_layer": {
-      "type": "string",
-      "pattern": "^flow_[a-z0-9_]+_v[0-9]+$",
-      "description": "ID of parent flow_initiative"
-    },
-    "issue": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Description of the problem"
-    },
-    "hypotheses": {
-      "type": "array",
-      "items": { "type": "string", "minLength": 1 },
-      "description": "Candidate explanations for the issue"
-    },
-    "repro_steps": {
-      "type": "array",
-      "items": { "type": "string", "minLength": 1 },
-      "description": "Steps to reproduce the issue"
-    },
-    "enables_lower_layer": {
-      "type": "array",
-      "items": { "type": "string", "minLength": 1 },
-      "description": "What this track enables (bidirectional contract)"
-    },
-    "upward_feedback": {
-      "type": "string",
-      "description": "Conditions triggering escalation to upper layer"
-    },
-    "cheddar_state": {
-      "type": "string",
-      "enum": ["active", "resolved", "stinky"],
-      "description": "Artifact lifecycle state"
-    },
+    "level": { "type": "string", "const": "cheddar_track" },
+    "id": { "type": "string", "pattern": "^track_[a-z0-9_]+_v[0-9]+$" },
+    "title": { "type": "string", "minLength": 1 },
+    "supports_upper_layer": { "type": "string", "pattern": "^flow_[a-z0-9_]+_v[0-9]+$" },
+    "issue": { "type": "string", "minLength": 1 },
+    "hypotheses": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "repro_steps": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "enables_lower_layer": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "upward_feedback": { "type": "string" },
+    "cheddar_state": { "type": "string", "enum": ["active","resolved","stinky"] },
     "lineage": {
       "type": "object",
       "properties": {
-        "upstream_hash": {
-          "type": "string",
-          "pattern": "^sha256:[a-f0-9]",
-          "description": "SHA-256 hash of parent flow_initiative"
-        },
-        "hash": {
-          "type": "string",
-          "pattern": "^sha256:[a-f0-9]",
-          "description": "SHA-256 hash of this artifact's content"
-        },
-        "signed_by": {
-          "type": "string",
-          "description": "Role or identity that signed this artifact"
-        },
-        "timestamp": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Signing timestamp"
-        }
+        "upstream_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "signed_by": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
       },
-      "required": ["upstream_hash", "hash", "timestamp"],
+      "required": ["upstream_hash","hash","timestamp"],
       "additionalProperties": false
     }
   },
 
-  "required": [
-    "level",
-    "id",
-    "title",
-    "supports_upper_layer",
-    "issue",
-    "lineage"
-  ],
+  "required": ["level","id","title","supports_upper_layer","issue","lineage"],
   "additionalProperties": false
 }

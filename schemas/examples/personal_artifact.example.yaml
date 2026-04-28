@@ -25,8 +25,8 @@ due_date: "2026-01-10T17:00:00Z"
 cheddar_state: "active"  # Required for personal artifacts
 
 lineage:
-  upstream_hash: "sha256:d4e5f6a7b8c9..."  # Must match parent's lineage.hash
-  hash: "sha256:e5f6a7b8c9d0..."
+  upstream_hash: "sha256:afcc8cbf283e742b46fae3fc8be2ff4cc319b985565abb676d6939151037b44f"
+  hash: "sha256:99833311ac863d486982bf98ccde27fc14aab55e111f42691d4a9fd0ad031444"
   signed_by: "alice_ml_engineer"
   timestamp: "2026-01-06T04:00:00Z"
 

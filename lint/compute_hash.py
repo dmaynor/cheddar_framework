@@ -7,7 +7,7 @@ Enforces: INV-004 (Every artifact MUST include a lineage.hash computed from cont
 
 Algorithm:
     1. Deep copy artifact
-    2. Remove lineage.hash field (if present)
+    2. Remove lineage.hash and runtime-only metadata
     3. Serialize to canonical JSON (sorted keys, no whitespace)
     4. Compute SHA-256 of UTF-8 encoded canonical form
     5. Prefix with "sha256:"
@@ -30,6 +30,7 @@ import hashlib
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -40,38 +41,66 @@ EXIT_USAGE_ERROR = 2
 EXIT_INTERNAL_ERROR = 3
 
 
-def compute_hash(artifact: dict) -> str:
+def strip_runtime_metadata(value: Any) -> Any:
     """
-    Compute the lineage hash for an artifact.
-    
-    The hash is computed from a canonical JSON representation with:
-    - lineage.hash field excluded
-    - Keys sorted alphabetically at all levels
-    - No whitespace (compact separators)
-    - UTF-8 encoding
-    
-    Returns:
-        Hash string in format "sha256:<64 hex chars>"
+    Return a copy of value with runtime-only metadata removed.
+
+    Any mapping key beginning with "_" is treated as runtime metadata and is
+    excluded from hash material. This prevents local loader details such as
+    _source_path from making hashes path- or machine-dependent.
     """
-    # Deep copy to avoid modifying original
-    content = copy.deepcopy(artifact)
-    
-    # Remove lineage.hash if present
+    if isinstance(value, dict):
+        return {
+            key: strip_runtime_metadata(item)
+            for key, item in value.items()
+            if not str(key).startswith("_")
+        }
+
+    if isinstance(value, list):
+        return [strip_runtime_metadata(item) for item in value]
+
+    return value
+
+
+def canonicalize_for_hash(artifact: dict) -> dict:
+    """
+    Return the canonical artifact structure used as hash input.
+
+    The canonical form excludes:
+    - lineage.hash
+    - documentation_log.lineage.hash
+    - runtime-only keys beginning with "_"
+    """
+    content = strip_runtime_metadata(copy.deepcopy(artifact))
+
     if "lineage" in content and "hash" in content["lineage"]:
         del content["lineage"]["hash"]
-    
-    # Handle documentation_log wrapper
+
     if "documentation_log" in content:
         log = content["documentation_log"]
         if "lineage" in log and "hash" in log["lineage"]:
             del log["lineage"]["hash"]
-    
-    # Serialize to canonical JSON
+
+    return content
+
+
+def compute_hash(artifact: dict) -> str:
+    """
+    Compute the lineage hash for an artifact.
+
+    The hash is computed from a canonical JSON representation with:
+    - lineage.hash field excluded
+    - runtime-only metadata excluded
+    - Keys sorted alphabetically at all levels
+    - No whitespace (compact separators)
+    - UTF-8 encoding
+
+    Returns:
+        Hash string in format "sha256:<64 hex chars>"
+    """
+    content = canonicalize_for_hash(artifact)
     canonical = json.dumps(content, sort_keys=True, separators=(",", ":"))
-    
-    # Compute SHA-256
     digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-    
     return f"sha256:{digest}"
 
 
@@ -84,42 +113,44 @@ def load_artifact(path: Path) -> dict:
 def save_artifact(path: Path, artifact: dict) -> None:
     """
     Save an artifact back to YAML, preserving comments where possible.
-    
+
     Note: PyYAML does not preserve comments. For production use,
     consider ruamel.yaml for round-trip preservation.
     """
     with open(path, "w", encoding="utf-8") as f:
-        yaml.dump(artifact, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
+        yaml.dump(
+            artifact,
+            f,
+            default_flow_style=False,
+            sort_keys=False,
+            allow_unicode=True,
+        )
 
 
 def get_existing_hash(artifact: dict) -> str | None:
     """Extract existing lineage.hash from artifact."""
-    # Standard artifacts
     if "lineage" in artifact and "hash" in artifact["lineage"]:
         return artifact["lineage"]["hash"]
-    
-    # Documentation logs
+
     if "documentation_log" in artifact:
         log = artifact["documentation_log"]
         if "lineage" in log and "hash" in log["lineage"]:
             return log["lineage"]["hash"]
-    
+
     return None
 
 
 def set_hash(artifact: dict, hash_value: str) -> dict:
     """Set lineage.hash in artifact and return modified artifact."""
     result = copy.deepcopy(artifact)
-    
-    # Standard artifacts
+
     if "lineage" in result:
         result["lineage"]["hash"] = hash_value
     elif "documentation_log" in result and "lineage" in result["documentation_log"]:
         result["documentation_log"]["lineage"]["hash"] = hash_value
     else:
-        # Create lineage block if missing
         result["lineage"] = {"hash": hash_value}
-    
+
     return result
 
 
@@ -127,11 +158,11 @@ def format_output(
     path: Path,
     computed_hash: str,
     existing_hash: str | None,
-    mode: str
+    mode: str,
 ) -> dict:
     """
     Format output for display or JSON.
-    
+
     Returns dict with:
         - file: str
         - computed_hash: str
@@ -146,10 +177,10 @@ def format_output(
         "match": None,
         "action": mode,
     }
-    
+
     if existing_hash:
-        result["match"] = (computed_hash == existing_hash)
-    
+        result["match"] = computed_hash == existing_hash
+
     return result
 
 
@@ -163,35 +194,37 @@ def main() -> int:
         type=Path,
         help="Artifact file to process",
     )
-    
+
     mode_group = parser.add_mutually_exclusive_group()
     mode_group.add_argument(
-        "--update", "-u",
+        "--update",
+        "-u",
         action="store_true",
         help="Update artifact file with computed hash",
     )
     mode_group.add_argument(
-        "--verify", "-v",
+        "--verify",
+        "-v",
         action="store_true",
         help="Verify existing hash matches computed hash",
     )
-    
+
     parser.add_argument(
         "--json",
         action="store_true",
         help="Output results as JSON",
     )
-    
+
     args = parser.parse_args()
-    
+
     if not args.path.exists():
         print(f"Error: File not found: {args.path}", file=sys.stderr)
         return EXIT_USAGE_ERROR
-    
+
     if not args.path.is_file():
         print(f"Error: Not a file: {args.path}", file=sys.stderr)
         return EXIT_USAGE_ERROR
-    
+
     try:
         artifact = load_artifact(args.path)
     except yaml.YAMLError as e:
@@ -200,21 +233,20 @@ def main() -> int:
     except Exception as e:
         print(f"Error: Failed to load file: {e}", file=sys.stderr)
         return EXIT_INTERNAL_ERROR
-    
+
     try:
         computed_hash = compute_hash(artifact)
         existing_hash = get_existing_hash(artifact)
-        
-        # Determine mode
+
         if args.update:
             mode = "update"
         elif args.verify:
             mode = "verify"
         else:
             mode = "compute"
-        
+
         result = format_output(args.path, computed_hash, existing_hash, mode)
-        
+
         if args.json:
             print(json.dumps(result, indent=2))
         else:
@@ -226,12 +258,12 @@ def main() -> int:
                     print(f"Existing hash: {existing_hash} {match_str}")
                 else:
                     print("Existing hash: (none)")
-            
+
             elif mode == "verify":
                 if not existing_hash:
                     print(f"✗ {args.path}: No existing hash to verify")
                     return EXIT_HASH_MISMATCH
-                
+
                 if result["match"]:
                     print(f"✓ {args.path}: Hash verified")
                 else:
@@ -239,14 +271,14 @@ def main() -> int:
                     print(f"  Expected: {existing_hash}")
                     print(f"  Computed: {computed_hash}")
                     return EXIT_HASH_MISMATCH
-            
+
             elif mode == "update":
                 updated = set_hash(artifact, computed_hash)
                 save_artifact(args.path, updated)
                 print(f"✓ {args.path}: Hash updated to {computed_hash}")
-        
+
         return EXIT_SUCCESS
-        
+
     except Exception as e:
         print(f"Internal error: {e}", file=sys.stderr)
         return EXIT_INTERNAL_ERROR

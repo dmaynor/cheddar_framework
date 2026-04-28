@@ -35,14 +35,16 @@ change_management:
     - role: "vp_of_engineering"
     - role: "security_officer"
   rollback_plan: "Revert to prior model weights if precision drops below 90%"
-  canary_percentage: 5
-  canary_duration_hours: 24
+  rollout:
+    strategy: "canary"
+    canary_percentage: 5
+    canary_duration_hours: 24
 
 cheddar_state: "active"
 
 lineage:
-  upstream_hash: "sha256:c3d4e5f6a7b8..."  # Must match parent's lineage.hash
-  hash: "sha256:d4e5f6a7b8c9..."
+  upstream_hash: "sha256:131c4a4313cfc90150cce00d93bbc0262b8ea0ff711a93faed5c2643652ec413"
+  hash: "sha256:afcc8cbf283e742b46fae3fc8be2ff4cc319b985565abb676d6939151037b44f"
   signed_by: "ml_platform_lead"
   timestamp: "2026-01-06T03:00:00Z"
 
