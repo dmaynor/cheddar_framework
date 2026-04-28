@@ -17,12 +17,14 @@ Run directly through the lint scripts:
 python lint/run_all.py --examples --strict
 ```
 
-Or install the package in editable mode and use the CLI wrapper:
+Or install the package in editable mode from a repository checkout and use the CLI wrapper:
 
 ```bash
 python -m pip install -e .
 cheddar lint --examples --strict
 ```
+
+Current CLI limitation: `cheddar lint` is a thin wrapper over `lint/run_all.py` and expects a repository checkout/editable install. A future package refactor should move lint internals under `src/cheddar/` for wheel-safe execution.
 
 ## Documentation Map
 
@@ -45,7 +47,7 @@ cheddar lint --examples --strict
 | Schemas | PARTIAL (SHA256 enforcement added) |
 | Validation tooling | PARTIAL (strict mode added) |
 | Examples | PARTIAL (lineage normalized) |
-| Python package | PARTIAL (minimal CLI wrapper added) |
+| Python package | PARTIAL (minimal editable-install CLI wrapper added) |
 
 ## Current Reality
 
@@ -53,7 +55,7 @@ cheddar lint --examples --strict
 - Strict linting (no silent bypass)
 - Full SHA256 enforcement across schemas
 - Example lineage chains use real hashes
-- Minimal `cheddar lint` CLI wrapper
+- Minimal `cheddar lint` CLI wrapper for repository checkout/editable installs
 
 ## Meta-Rule
 
