@@ -33,17 +33,25 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 |-----------|--------|----------|
 | Domain model | `[EXISTS]` | `docs/domain-model.md` |
 | Invariants | `[EXISTS]` | `docs/invariants.md` |
-| Schema examples | `[EXISTS]` | `schemas/examples/` |
-| Conceptual docs | `[EXISTS]` | `docs/` |
-| JSON Schema definitions | `[PLANNED]` | `schemas/` |
-| Validation tooling | `[PLANNED]` | `lint/` |
-| Example artifacts | `[PLANNED]` | `artifacts/` |
-| Python package | `[PLANNED]` | `src/` |
+| JSON Schema definitions | `[PARTIAL]` | `schemas/*.schema.json` |
+| Schema examples | `[PARTIAL]` | `schemas/examples/` |
+| Validation tooling | `[PARTIAL]` | `lint/` |
+| Example artifacts | `[PLACEHOLDER]` | `artifacts/` |
+| Python package | `[PARTIAL]` | `src/cheddar/` |
 
 **Status Markers:**
-- `[EXISTS]` — Present and functional
+- `[EXISTS]` — Present and usable
+- `[PARTIAL]` — Implemented but not fully enforced or complete
+- `[PLACEHOLDER]` — Structure exists but not production-ready
 - `[REQUIRED]` — Must exist for v1.0
 - `[PLANNED]` — Intended future capability
+
+## Current State (Hardening In Progress)
+
+- Hashing is **deterministic and metadata-safe**
+- Lint runner supports **strict validation modes**
+- Schemas are being normalized to **full SHA-256 enforcement**
+- Example artifacts are being upgraded from placeholders to **valid lineage chains**
 
 ## Meta-Rule
 
