@@ -4,6 +4,10 @@ This module provides a thin package-backed wrapper around the existing lint
 scripts. It intentionally avoids refactoring the lint implementation yet, so the
 package entrypoint declared in pyproject.toml becomes real without changing the
 framework model.
+
+Current limitation: this wrapper expects a repository checkout or editable
+install where lint/run_all.py is present. A future package refactor should move
+lint logic under src/cheddar/ for wheel-safe execution.
 """
 
 from __future__ import annotations
@@ -20,6 +24,16 @@ LINT_RUNNER = REPO_ROOT / "lint" / "run_all.py"
 
 def run_lint(args: argparse.Namespace) -> int:
     """Run Cheddar lint checks through the existing lint runner."""
+    if not LINT_RUNNER.exists():
+        print(
+            "Error: lint/run_all.py was not found. "
+            "The minimal cheddar CLI currently requires a repository checkout "
+            "or editable install. Run `python lint/run_all.py ...` from the "
+            "repository root, or install with `python -m pip install -e .`.",
+            file=sys.stderr,
+        )
+        return 1
+
     command = [sys.executable, str(LINT_RUNNER)]
 
     if args.examples:
