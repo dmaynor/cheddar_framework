@@ -2,23 +2,42 @@
 
 Cheddar is a PM/accountability framework for AI-augmented organizations. It aligns missions, initiatives, tasks, and automation through signed, traceable artifacts that humans and AI share.
 
+## Quick Start
+
+1. Read `docs/domain-model.md`
+2. Review `docs/invariants.md`
+3. Explore `schemas/examples/`
+4. Browse `docs/`
+
+## Documentation Map
+
+### Core
+- docs/domain-model.md
+- docs/invariants.md
+- schemas/
+
+### Guides
+- docs/overview.md
+- docs/artifact-hierarchy.md
+- docs/ai-integration.md
+
 ## Repository Status
 
 | Component | Status |
 |-----------|--------|
 | Domain model | EXISTS |
 | Invariants | EXISTS |
-| JSON Schemas | PARTIAL (now enforcing SHA256) |
+| Schemas | PARTIAL (SHA256 enforcement added) |
 | Validation tooling | PARTIAL (strict mode added) |
 | Examples | PARTIAL (lineage normalized) |
 | Python package | PLANNED |
 
-## Current State
+## Current Reality
 
 - Deterministic hashing (metadata-safe)
-- Strict linting path (no silent bypass)
+- Strict linting (no silent bypass)
 - Full SHA256 enforcement across schemas
-- Example chain uses real lineage hashes
+- Example lineage chains use real hashes
 
 ## Meta-Rule
 
