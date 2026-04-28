@@ -60,7 +60,7 @@ These are the only value types allowed in an artifact's content after normalizat
 
 ### String Normalization
 
-All strings MUST be Unicode **NFC-normalized** before serialization. Rationale: two visually identical strings composed differently (e.g. precomposed `é` vs. `e` + combining acute) would otherwise hash differently.
+All strings MUST be Unicode **NFC-normalized** before serialization. **This includes mapping keys**, not only values — keys are strings per the type table above, and inconsistent normalization of a key produces a different sort order and therefore a different hash. Rationale: two visually identical strings composed differently (e.g. precomposed `é` vs. `e` + combining acute) would otherwise hash differently.
 
 Whitespace inside strings is preserved exactly as authored. Leading/trailing whitespace is not stripped.
 
@@ -106,7 +106,7 @@ import yaml
 
 def _normalize(node):
     if isinstance(node, dict):
-        return {k: _normalize(v) for k, v in node.items()}
+        return {unicodedata.normalize("NFC", k): _normalize(v) for k, v in node.items()}
     if isinstance(node, list):
         return [_normalize(v) for v in node]
     if isinstance(node, str):
