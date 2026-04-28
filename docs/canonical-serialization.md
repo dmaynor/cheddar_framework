@@ -20,7 +20,7 @@ This document specifies the one canonical form that MUST be used for computing `
 
 To compute `lineage.hash` for an artifact:
 
-1. **Load** the YAML file into an in-memory tree using a YAML 1.2 parser in safe mode.
+1. **Load** the YAML file in safe mode (no custom tags, no code execution). Any YAML loader is acceptable so long as the [§ Type Rules](#type-rules) below are enforced after loading; differences between YAML 1.1 and 1.2 implicit-resolution behavior are absorbed there. Implementations MUST reject artifacts whose loaded value tree contains any disallowed type.
 2. **Strip** the `lineage.hash` field (and only that field) from the tree. For `documentation_log` artifacts, strip `documentation_log.lineage.hash`.
 3. **Normalize** the tree per the rules in [§ Type Rules](#type-rules) below.
 4. **Serialize** the normalized tree to **canonical JSON** per [§ Canonical JSON](#canonical-json) below.
@@ -57,6 +57,12 @@ These are the only value types allowed in an artifact's content after normalizat
 - **Non-string mapping keys** (integers, booleans as keys).
 - **Anchors and aliases** (`&foo`, `*foo`). The parser MUST resolve them before hashing; authoring artifacts with anchors is discouraged because it makes diffs harder to review.
 - **NaN, Infinity.** Would imply floats anyway; prohibited.
+- **YAML 1.1 implicit booleans** (`yes`, `no`, `on`, `off`, `Y`, `N`). Only the literals `true` and `false` resolve to booleans. Authors MUST quote any string that looks like a YAML 1.1 boolean (e.g. `value: "no"`) so it remains a string regardless of loader version. Validators MUST reject unquoted occurrences.
+- **YAML 1.1 octal / sexagesimal numerics** (`0o17`, `01:02:03`). Only base-10 integer literals are recognized as integers; anything else MUST be a quoted string.
+
+### Loader-version safety
+
+Different YAML loaders disagree on implicit scalar resolution (PyYAML's `safe_load` uses YAML 1.1 rules; some libraries default to 1.2). The Type Rules above are written so that any loader operating in safe mode produces the same in-memory tree *for conforming artifacts*: every value either falls in the allowed set unambiguously across versions, or the artifact MUST be rejected. Authors MUST quote scalars that resolve differently under YAML 1.1 vs 1.2; validators MUST refuse artifacts that would be ambiguous.
 
 ### String Normalization
 
@@ -96,7 +102,7 @@ If floats are ever introduced (see [§ Future Extensions](#future-extensions)), 
 
 ## Reference Implementation
 
-The normative implementation is `lint/compute_hash.py`. Tooling in other languages MUST match its output byte-for-byte on the [§ Test Vectors](#test-vectors) below.
+This specification is the normative source for `lineage.hash` computation. The current reference implementation is `lint/compute_hash.py`; tooling in other languages MUST conform to this spec and match the canonical bytes produced for the [§ Test Vectors](#test-vectors) below. The current `lint/compute_hash.py` is not yet conformant — see [§ Gaps in the current `lint/compute_hash.py`](#gaps-in-the-current-lintcompute_hashpy) — and is being updated to match in Tier 1.
 
 Minimal Python reference:
 
@@ -106,14 +112,25 @@ import yaml
 
 def _normalize(node):
     if isinstance(node, dict):
-        return {unicodedata.normalize("NFC", k): _normalize(v) for k, v in node.items()}
+        out = {}
+        for k, v in node.items():
+            if not isinstance(k, str):
+                raise TypeError(
+                    f"prohibited mapping-key type: {type(k).__name__}; "
+                    "keys MUST be strings (see Type Rules)"
+                )
+            out[unicodedata.normalize("NFC", k)] = _normalize(v)
+        return out
     if isinstance(node, list):
         return [_normalize(v) for v in node]
     if isinstance(node, str):
         return unicodedata.normalize("NFC", node)
-    if isinstance(node, bool) or node is None or isinstance(node, int):
+    # bool is a subclass of int — check it first to avoid hashing True as 1
+    if isinstance(node, bool) or node is None:
         return node
-    raise TypeError(f"prohibited type for hashing: {type(node).__name__}")
+    if isinstance(node, int):
+        return node
+    raise TypeError(f"prohibited value type for hashing: {type(node).__name__}")
 
 def compute_hash(artifact: dict) -> str:
     content = copy.deepcopy(artifact)

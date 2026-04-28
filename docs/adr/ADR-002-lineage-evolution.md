@@ -11,7 +11,7 @@
 
 ADR-001 established that the artifact hierarchy is canonical and that `supports_upper_layer` + `lineage.upstream_hash` together form the accountability chain. But the framework has not specified how the chain evolves over time. In practice, artifacts change:
 
-1. **Revisions** — an owner fixes a typo in a mission's `intent`, tightens an acceptance criterion on a brief, or adds a new test. The artifact's ID stays the same conceptually, but its content changes.
+1. **Revisions** — an owner fixes a typo in a mission's `intent`, tightens an acceptance criterion on a brief, or adds a new test. The artifact keeps the same conceptual ID stem, but its full versioned `id` (`_v1` → `_v2`) and its content both change.
 2. **Forks** — one team copies another team's brief as a starting point for a different initiative. The two artifacts diverge from a shared ancestor but belong to different chains.
 3. **Schema migrations** — the framework adds a required field (e.g. `risk_tier`) to a schema. Every existing artifact now has a different canonical serialization and therefore a different hash.
 4. **Retirements** — a mission is superseded by a new mission. Downstream work continues under the new mission; the old chain must not silently rot.
@@ -26,7 +26,7 @@ Adopt four well-defined lifecycle operations — **revise**, **fork**, **migrate
 
 ### Principles
 
-1. **IDs are immutable once signed.** Renaming is not an operation. If the intent changes enough to want a new name, the correct operation is `supersede`.
+1. **A signed `id` is immutable.** A specific versioned `id` (e.g. `brief_retrain_v2`) never changes once signed. A revision creates a *new* artifact with the same ID stem and a higher version suffix; the prior versioned `id` remains in the repository as history. Renaming a stem is not an operation — if the intent changes enough to want a new stem, the correct operation is `supersede`.
 2. **Hashes are content-exact.** Any content change (per `docs/canonical-serialization.md`) produces a new hash. There is no "soft edit."
 3. **Version suffixes encode revisions.** The `_v1` / `_v2` suffix in the `id` field (INV-002) is the one place where "same artifact, new content" is expressed.
 4. **Chain continuity is preserved explicitly.** Every evolution operation leaves an explicit pointer so that a verifier can walk both forward and backward in time.
