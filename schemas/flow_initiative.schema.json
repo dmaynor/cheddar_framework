@@ -61,12 +61,12 @@
       "properties": {
         "upstream_hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]",
+          "pattern": "^sha256:[a-f0-9]{64}$",
           "description": "SHA-256 hash of parent mission_definition"
         },
         "hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]",
+          "pattern": "^sha256:[a-f0-9]{64}$",
           "description": "SHA-256 hash of this artifact's content"
         },
         "signed_by": {
