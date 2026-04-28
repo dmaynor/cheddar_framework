@@ -9,6 +9,21 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 3. Explore `schemas/examples/`
 4. Browse `docs/`
 
+## Validation
+
+Run directly through the lint scripts:
+
+```bash
+python lint/run_all.py --examples --strict
+```
+
+Or install the package in editable mode and use the CLI wrapper:
+
+```bash
+python -m pip install -e .
+cheddar lint --examples --strict
+```
+
 ## Documentation Map
 
 ### Core
@@ -30,7 +45,7 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 | Schemas | PARTIAL (SHA256 enforcement added) |
 | Validation tooling | PARTIAL (strict mode added) |
 | Examples | PARTIAL (lineage normalized) |
-| Python package | PLANNED |
+| Python package | PARTIAL (minimal CLI wrapper added) |
 
 ## Current Reality
 
@@ -38,6 +53,7 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 - Strict linting (no silent bypass)
 - Full SHA256 enforcement across schemas
 - Example lineage chains use real hashes
+- Minimal `cheddar lint` CLI wrapper
 
 ## Meta-Rule
 
