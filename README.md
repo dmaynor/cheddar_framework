@@ -4,24 +4,14 @@ Cheddar is a PM/accountability framework for AI-augmented organizations. It alig
 
 ## Quick Start
 
-1. **Understand the model**: Read [`docs/domain-model.md`](docs/domain-model.md)
-2. **Know the rules**: Review [`docs/invariants.md`](docs/invariants.md)
-3. **See examples**: Browse [`schemas/examples/`](schemas/examples/)
-4. **Explore docs**: Dive into `docs/`
-
-## Validate (quick check)
-
-Run:
-
-```bash
-python lint/run_all.py --examples --strict
-```
-
-Expected: all checks pass.
+1. Read `docs/domain-model.md`
+2. Review `docs/invariants.md`
+3. Explore `schemas/examples/`
+4. Browse `docs/`
 
 ## Documentation Map
 
-### Core Reference
+### Core
 - docs/domain-model.md
 - docs/invariants.md
 - schemas/

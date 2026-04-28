@@ -27,8 +27,8 @@ telemetry_signals:
 cheddar_state: "active"
 
 lineage:
-  upstream_hash: "sha256:a1b2c3d4e5f6..."  # Must match parent's lineage.hash
-  hash: "sha256:b2c3d4e5f6a7..."
+  upstream_hash: "sha256:e01fb0ce7f150da77e13712a705df9ec8ac5ba74769d8ab88c10415ead66115c"
+  hash: "sha256:d880a818d4ffaa5c4435dde95b4da4c863ca44d86c577f6925d8f0f4b83067a9"
   signed_by: "vp_of_engineering"
   timestamp: "2026-01-06T01:00:00Z"
 
