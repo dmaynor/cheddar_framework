@@ -1,0 +1,21 @@
+module:
+  id: package_audit_macos
+  name: macOS Package and Software Inventory
+  category: inventory
+  risk: passive
+  description: >
+    Captures installed packages, Homebrew formulae and casks, and basic
+    OS version on macOS hosts.
+  platforms: [darwin]
+  checks:
+    - id: sw_vers
+      command: "sw_vers"
+    - id: pkgutil_pkgs
+      command: "pkgutil --pkgs"
+    - id: brew_list
+      command: "brew list --versions 2>/dev/null || true"
+    - id: brew_cask_list
+      command: "brew list --cask --versions 2>/dev/null || true"
+    - id: system_profiler_software
+      command: "system_profiler SPApplicationsDataType 2>/dev/null | head -n 200 || true"
+      timeout_seconds: 120

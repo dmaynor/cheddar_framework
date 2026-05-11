@@ -1,0 +1,25 @@
+module:
+  id: package_audit_linux
+  name: Linux Package Inventory
+  category: inventory
+  risk: passive
+  description: >
+    Captures installed packages and pending updates from common Linux
+    package managers. Tolerates managers that aren't installed.
+  platforms: [linux]
+  checks:
+    - id: os_release
+      command: "cat /etc/os-release 2>/dev/null || true"
+    - id: dpkg_list
+      command: "dpkg -l 2>/dev/null || true"
+    - id: rpm_list
+      command: "rpm -qa 2>/dev/null || true"
+    - id: apk_list
+      command: "apk info -v 2>/dev/null || true"
+    - id: apt_security_updates
+      command: "apt-get -s upgrade 2>/dev/null | grep -i security || true"
+    - id: dnf_updates
+      command: "dnf check-update --refresh 2>/dev/null || true"
+      timeout_seconds: 120
+    - id: kernel_packages
+      command: "dpkg -l 'linux-image-*' 2>/dev/null || rpm -qa kernel\\* 2>/dev/null || true"

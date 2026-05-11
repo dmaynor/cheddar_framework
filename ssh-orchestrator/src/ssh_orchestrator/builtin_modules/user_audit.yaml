@@ -1,0 +1,26 @@
+module:
+  id: user_audit
+  name: Local User Audit
+  category: identity
+  risk: passive
+  description: >
+    Lists local users, groups, and currently logged-in sessions.
+    Read-only; reads /etc/passwd and /etc/group which are world-readable.
+  platforms: [linux, darwin]
+  checks:
+    - id: passwd
+      command: "cat /etc/passwd"
+    - id: group
+      command: "cat /etc/group"
+    - id: who
+      command: "who"
+    - id: w
+      command: "w"
+    - id: last_logins
+      command: "last -n 25 2>/dev/null || true"
+    - id: uid_zero_accounts
+      command: "awk -F: '$3 == 0 {print $1}' /etc/passwd"
+    - id: empty_password_accounts
+      command: >
+        awk -F: '($2 == \"\" || $2 == \"*\" || $2 == \"!\")'
+        /etc/shadow 2>/dev/null || echo 'shadow not readable'

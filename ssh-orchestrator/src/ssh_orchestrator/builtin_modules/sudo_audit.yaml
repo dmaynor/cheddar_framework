@@ -1,0 +1,24 @@
+module:
+  id: sudo_audit
+  name: Sudo Privilege Audit
+  category: identity
+  risk: low
+  description: >
+    Captures sudo configuration, current user privileges, and members of
+    privileged groups. Tolerates restricted access to sudoers files.
+  platforms: [linux, darwin]
+  checks:
+    - id: sudoers
+      command: "cat /etc/sudoers 2>/dev/null || true"
+    - id: sudoers_d
+      command: >
+        for f in /etc/sudoers.d/*; do echo \"=== $f ===\";
+        cat \"$f\" 2>/dev/null; done
+    - id: sudo_list_self
+      command: "sudo -ln 2>/dev/null || true"
+    - id: wheel_group
+      command: "getent group wheel 2>/dev/null || dscl . -read /Groups/wheel 2>/dev/null || true"
+    - id: sudo_group
+      command: "getent group sudo 2>/dev/null || true"
+    - id: admin_group_macos
+      command: "dscl . -read /Groups/admin GroupMembership 2>/dev/null || true"

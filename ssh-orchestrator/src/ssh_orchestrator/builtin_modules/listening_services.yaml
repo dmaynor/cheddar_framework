@@ -1,0 +1,27 @@
+module:
+  id: listening_services
+  name: Listening Services and Open Sockets
+  category: network
+  risk: low
+  description: >
+    Enumerates listening TCP/UDP sockets, established connections, and
+    routing/firewall posture. Uses tools available on Linux and macOS;
+    each check tolerates missing utilities.
+  platforms: [linux, darwin]
+  checks:
+    - id: ss_listen
+      command: "ss -tulnp 2>/dev/null || netstat -tulnp 2>/dev/null || true"
+    - id: lsof_listen
+      command: "lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || true"
+    - id: lsof_udp
+      command: "lsof -nP -iUDP 2>/dev/null || true"
+    - id: routes
+      command: "ip route 2>/dev/null || netstat -rn 2>/dev/null || true"
+    - id: interfaces
+      command: "ip addr 2>/dev/null || ifconfig 2>/dev/null || true"
+    - id: iptables_filter
+      command: "iptables -S 2>/dev/null || true"
+    - id: nftables
+      command: "nft list ruleset 2>/dev/null || true"
+    - id: pfctl_macos
+      command: "pfctl -sr 2>/dev/null || true"

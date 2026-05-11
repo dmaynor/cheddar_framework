@@ -1,0 +1,43 @@
+engagement:
+  id: eng-2026-q2-baseline
+  name: Q2 2026 Linux Server Baseline Audit
+  authorized_by: security-lead@example.com
+  authorization_date: 2026-05-01
+  scope_expires: 2026-05-31
+  max_risk: low
+  notes: >
+    Read-only baseline audit of a small fleet. No exploitation. All
+    commands run as the audit user; sudo not required.
+
+ssh:
+  default_user: audit
+  default_port: 22
+  identity_file: ~/.ssh/audit_key
+  known_hosts_file: ~/.ssh/known_hosts
+  strict_host_key_checking: true
+  connect_timeout: 10
+  extra_options:
+    - "ServerAliveInterval=30"
+
+targets:
+  - host: web01.example.com
+    tags: [web, prod]
+  - host: web02.example.com
+    tags: [web, prod]
+  - host: db01.example.com
+    user: dbaudit
+    port: 2222
+    tags: [db, prod]
+
+modules:
+  - system_info
+  - user_audit
+  - ssh_audit
+  - listening_services
+  - sudo_audit
+  - package_audit_linux
+
+limits:
+  max_parallel: 3
+  per_host_timeout: 600
+  per_command_timeout: 60

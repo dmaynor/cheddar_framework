@@ -1,0 +1,33 @@
+module:
+  id: filesystem_hygiene
+  name: Filesystem Hygiene
+  category: hardening
+  risk: low
+  description: >
+    Looks for common filesystem hygiene issues: world-writable files, suid
+    binaries, no-owner files. Bounded with -xdev to avoid traversing remote
+    mounts and given a generous per-check timeout.
+  platforms: [linux, darwin]
+  checks:
+    - id: world_writable_files
+      command: >
+        find / -xdev -type f -perm -0002 -not -path '/proc/*'
+        -not -path '/sys/*' 2>/dev/null | head -n 500
+      timeout_seconds: 180
+    - id: suid_binaries
+      command: >
+        find / -xdev -type f -perm -4000 -not -path '/proc/*'
+        2>/dev/null | head -n 500
+      timeout_seconds: 180
+    - id: sgid_binaries
+      command: >
+        find / -xdev -type f -perm -2000 -not -path '/proc/*'
+        2>/dev/null | head -n 500
+      timeout_seconds: 180
+    - id: no_owner_files
+      command: >
+        find / -xdev \( -nouser -o -nogroup \) -not -path '/proc/*'
+        2>/dev/null | head -n 200
+      timeout_seconds: 180
+    - id: tmp_listing
+      command: "ls -la /tmp /var/tmp 2>/dev/null"

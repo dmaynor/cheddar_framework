@@ -1,0 +1,22 @@
+module:
+  id: system_info
+  name: Basic System Information
+  category: recon
+  risk: passive
+  description: >
+    Captures hostname, kernel, uptime, current user, and clock state.
+    Read-only and unprivileged.
+  platforms: [linux, darwin]
+  checks:
+    - id: uname
+      command: "uname -a"
+    - id: hostname
+      command: "hostname"
+    - id: uptime
+      command: "uptime"
+    - id: id
+      command: "id"
+    - id: date
+      command: "date -u +%Y-%m-%dT%H:%M:%SZ"
+    - id: kernel_release
+      command: "uname -r"

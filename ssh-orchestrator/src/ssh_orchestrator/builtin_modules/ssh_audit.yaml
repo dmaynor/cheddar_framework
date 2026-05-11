@@ -1,0 +1,23 @@
+module:
+  id: ssh_audit
+  name: SSH Daemon Configuration Audit
+  category: hardening
+  risk: low
+  description: >
+    Reads sshd_config and known authorized_keys files. Useful for spotting
+    weak authentication settings (PasswordAuthentication yes, root login,
+    legacy ciphers).
+  platforms: [linux, darwin]
+  checks:
+    - id: sshd_config
+      command: "cat /etc/ssh/sshd_config 2>/dev/null || true"
+    - id: sshd_effective_config
+      command: "sshd -T 2>/dev/null || true"
+    - id: ssh_config
+      command: "cat /etc/ssh/ssh_config 2>/dev/null || true"
+    - id: authorized_keys_root
+      command: "cat /root/.ssh/authorized_keys 2>/dev/null || true"
+    - id: authorized_keys_self
+      command: "cat ~/.ssh/authorized_keys 2>/dev/null || true"
+    - id: ssh_host_keys_perms
+      command: "ls -l /etc/ssh/ssh_host_*_key 2>/dev/null || true"
