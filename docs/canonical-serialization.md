@@ -21,7 +21,9 @@ This document specifies the one canonical form that MUST be used for computing `
 To compute `lineage.hash` for an artifact:
 
 1. **Load** the YAML file in safe mode (no custom tags, no code execution). Any YAML loader is acceptable so long as the [§ Type Rules](#type-rules) below are enforced after loading; differences between YAML 1.1 and 1.2 implicit-resolution behavior are absorbed there. Implementations MUST reject artifacts whose loaded value tree contains any disallowed type.
-2. **Strip** the `lineage.hash` field (and only that field) from the tree. For `documentation_log` artifacts, strip `documentation_log.lineage.hash`.
+2. **Strip** excluded fields from the tree:
+   - the `lineage.hash` field. For `documentation_log` artifacts, strip `documentation_log.lineage.hash`.
+   - every mapping key beginning with `_` (underscore), recursively at all levels. These are **runtime-only metadata** (e.g. `_source_path` injected by loaders) and MUST NOT affect the hash. Consequence: authors MUST NOT use `_`-prefixed keys for substantive content — they are invisible to the accountability chain.
 3. **Normalize** the tree per the rules in [§ Type Rules](#type-rules) below.
 4. **Serialize** the normalized tree to **canonical JSON** per [§ Canonical JSON](#canonical-json) below.
 5. **Encode** the canonical JSON as UTF-8 bytes.
@@ -72,31 +74,38 @@ Whitespace inside strings is preserved exactly as authored. Leading/trailing whi
 
 ### Hash Exclusion Rule
 
-Only the `lineage.hash` field itself is excluded from the hash input. Every other field — including `lineage.upstream_hash`, `lineage.signed_by`, `lineage.timestamp`, `enables_lower_layer`, and `upward_feedback` — is part of the content hash.
+Exactly two things are excluded from the hash input:
 
-Consequence: re-signing an artifact (changing `signed_by` or `timestamp`) produces a new hash and therefore a new version. This is intentional.
+1. The `lineage.hash` field itself.
+2. Any mapping key beginning with `_` (runtime-only metadata), recursively.
+
+Every other field — including `lineage.upstream_hash`, `lineage.signed_by`, `lineage.timestamp`, `enables_lower_layer`, and `upward_feedback` — is part of the content hash.
+
+Consequences:
+
+- Re-signing an artifact (changing `signed_by` or `timestamp`) produces a new hash and therefore a new version. This is intentional.
+- Two artifacts that differ only in `_`-prefixed keys hash identically. Validators SHOULD warn if `_`-prefixed keys appear in checked-in artifact files (they are meant for in-memory tooling state, not source).
 
 ---
 
 ## Canonical JSON
 
-Cheddar uses a narrow, Python-`json`-compatible subset of RFC 8785 JCS. For the value types permitted above, this subset is byte-for-byte interoperable with `json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)`.
+Cheddar uses a narrow, Python-`json`-compatible canonical form. For the value types permitted above, this form is byte-for-byte interoperable with `json.dumps(obj, sort_keys=True, separators=(",", ":"))` (Python's defaults, i.e. `ensure_ascii=True`).
 
 Rules:
 
-1. **UTF-8, no BOM.**
-2. **Keys sorted ascending by Unicode code point** at every object level.
+1. **ASCII output.** Every non-ASCII character is escaped as `\uXXXX` with **lowercase** hex digits; characters outside the Basic Multilingual Plane use UTF-16 surrogate pairs (e.g. U+1F600 becomes the twelve characters `\ud83d` `\ude00`). Within ASCII, only the two-character escapes `\"`, `\\`, `\b`, `\f`, `\n`, `\r`, `\t` and `\u00XX` for other control characters are used — no other ASCII character is escaped.
+2. **Keys sorted ascending by Unicode code point** at every object level. (Sorting happens on the NFC-normalized, *unescaped* key strings, before serialization.)
 3. **No insignificant whitespace** — separators are exactly `,` and `:` (no spaces).
-4. **Strings** use JSON string escapes. Non-ASCII characters are emitted as literal UTF-8 bytes (`ensure_ascii=False`), not `\uXXXX` escapes. Rationale: prevents hash drift when tools disagree on which characters need escaping.
-5. **Integers** are emitted as their decimal representation without leading zeros or trailing `.0`.
-6. **Booleans and null** are `true`, `false`, `null`.
-7. **No trailing newline.**
+4. **Integers** are emitted as their decimal representation without leading zeros or trailing `.0`.
+5. **Booleans and null** are `true`, `false`, `null`.
+6. **No trailing newline; no BOM.** The resulting byte string is pure ASCII, so the "UTF-8 encode" step is the identity.
 
-### Why this subset instead of full RFC 8785
+### Why ASCII-escaped instead of RFC 8785 literal UTF-8
 
-Full JCS requires IEEE-754 number serialization per ECMA-262, which is painful to implement and only matters if floats are in scope. By prohibiting floats at the schema boundary, the remaining rules collapse to what `json.dumps` already produces deterministically in any mainstream language.
+RFC 8785 JCS emits non-ASCII characters as literal UTF-8. Cheddar deliberately diverges and pins ASCII-escaped output because (a) the production hashes shipped in `schemas/examples/` were computed this way, and (b) it makes the canonical bytes printable and diff-safe in any toolchain. Both choices are deterministic; what matters is that exactly one is normative. Full JCS would also require IEEE-754 number serialization, which is moot here since floats are prohibited at the schema boundary.
 
-If floats are ever introduced (see [§ Future Extensions](#future-extensions)), this spec MUST be upgraded to full JCS.
+If floats are ever introduced (see [§ Future Extensions](#future-extensions)), this spec MUST be revisited.
 
 ---
 
@@ -132,8 +141,20 @@ def _normalize(node):
         return node
     raise TypeError(f"prohibited value type for hashing: {type(node).__name__}")
 
+def _strip_runtime_metadata(node):
+    """Remove mapping keys beginning with '_' (runtime-only metadata)."""
+    if isinstance(node, dict):
+        return {
+            k: _strip_runtime_metadata(v)
+            for k, v in node.items()
+            if not (isinstance(k, str) and k.startswith("_"))
+        }
+    if isinstance(node, list):
+        return [_strip_runtime_metadata(v) for v in node]
+    return node
+
 def compute_hash(artifact: dict) -> str:
-    content = copy.deepcopy(artifact)
+    content = _strip_runtime_metadata(copy.deepcopy(artifact))
     # strip lineage.hash (standard artifacts)
     if "lineage" in content:
         content["lineage"].pop("hash", None)
@@ -146,7 +167,7 @@ def compute_hash(artifact: dict) -> str:
         normalized,
         sort_keys=True,
         separators=(",", ":"),
-        ensure_ascii=False,
+        ensure_ascii=True,
     )
     digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
     return f"sha256:{digest}"
@@ -158,13 +179,13 @@ def load(path: str) -> dict:
 
 ### Gaps in the current `lint/compute_hash.py`
 
-The current implementation (at the time this spec was written) covers rules 1, 2, 3, 5, 6, 7 but does NOT yet enforce:
+The current implementation conforms to the Canonical JSON rules (it uses Python's `json.dumps` defaults, which match this spec's ASCII-escaped form) and implements the `_`-prefix runtime-metadata exclusion. It does NOT yet enforce:
 
-- **NFC string normalization** (rule in [§ String Normalization](#string-normalization)).
-- **Prohibited-type rejection** — it will silently hash floats or YAML datetimes if they appear.
-- **`ensure_ascii=False`** — it currently accepts the `json.dumps` default of `ensure_ascii=True`, which is deterministic but needs to be made explicit so non-ASCII strings hash identically across languages.
+- **NFC string normalization** of keys and values ([§ String Normalization](#string-normalization)).
+- **Prohibited-type rejection** — it will silently hash floats or YAML datetimes if they appear, instead of exiting non-zero.
+- **Non-string mapping-key rejection** — a mapping whose keys are all non-strings is silently coerced (`{42: "x"}` serializes as `{"42": "x"}`) rather than refused. (Mixed-type keys at one level do raise, but only incidentally, because sorted serialization cannot compare them.)
 
-These MUST be fixed before `lineage.hash` is used as a trust boundary. Tracked as part of Tier 1 package work.
+These conformance gaps only matter for artifacts that contain non-NFC Unicode or disallowed types — all current artifacts in `schemas/examples/` hash identically under both the current implementation and a fully conforming one. The gaps MUST be closed before `lineage.hash` is used as a trust boundary. Tracked as part of Tier 1 package work.
 
 ---
 
@@ -172,7 +193,7 @@ These MUST be fixed before `lineage.hash` is used as a trust boundary. Tracked a
 
 Reference artifacts and their expected hashes. Any implementation of this spec MUST reproduce these exactly.
 
-> These vectors will be materialized as golden files under `tests/fixtures/hash_vectors/` when the Python package lands (Tier 1). Until then, they are illustrative; the canonical vectors will be generated from `schemas/examples/` by the reference implementation and checked in alongside.
+> These vectors are enforced by `tests/test_canonical_hash.py`. The artifacts in `schemas/examples/` additionally serve as live vectors: their stored `lineage.hash` values MUST verify under this spec.
 
 ### Vector A — minimal mission
 
@@ -200,6 +221,12 @@ Canonical JSON (the bytes that get SHA-256'd):
 {"authorized_roles":["vp_of_engineering"],"cheddar_state":"active","id":"mission_test_v1","intent":"smoke test for hashing","level":"mission_definition","lineage":{"signed_by":"vp_of_engineering","timestamp":"2026-01-06T00:00:00Z","upstream_hash":null},"success_criteria":["hash is stable"],"title":"test"}
 ```
 
+Expected hash:
+
+```
+sha256:b830ea33b4c9d050e004bf082535cbac8cd979f1a424aae39d67ed90f4a743c1
+```
+
 ### Vector B — NFC normalization
 
 Two strings that MUST hash identically:
@@ -212,6 +239,10 @@ Both MUST produce the same final hash when substituted for any string field. A c
 ### Vector C — prohibited-type rejection
 
 An artifact containing a YAML float (e.g. `canary_percentage: 0.05` instead of `canary_percentage: 5`) MUST cause `compute_hash` to raise and the CLI to exit non-zero with a clear error. No hash is emitted.
+
+### Vector D — runtime-metadata exclusion
+
+Vector A with an added top-level key `_source_path: "/tmp/somewhere.yaml"` MUST produce **exactly the same hash** as Vector A (`sha256:b830ea33...`), because `_`-prefixed keys are excluded from hash material.
 
 ---
 
@@ -263,4 +294,5 @@ These are **out of scope for v1.0** and listed only so authors don't accidentall
 
 | Date | Change |
 |------|--------|
-| 2026-04-24 | Initial specification (v1.0). |
+| 2026-04-24 | Initial specification (v1.0 draft). |
+| 2026-06-10 | Reconciled v1.0 with the shipped implementation: pinned ASCII-escaped canonical JSON (matching production hashes in `schemas/examples/`), documented the `_`-prefix runtime-metadata exclusion, added Vector A expected hash and Vector D. |
