@@ -1,7 +1,8 @@
 # Canonical Serialization for Lineage Hashing
 
 **Status:** Specification (Tier 0) — normative for `lineage.hash` computation.
-**Applies to:** All Cheddar artifact types (mission, flow, track, brief, personal, documentation_log).
+**Applies to:** All artifact types that carry a `lineage` block: mission, flow, track, brief, personal.
+**Excluded today:** `documentation_log` — its schema (`schemas/documentation_log.schema.json`) does not allow a `lineage` field, and `lint/verify_lineage.py` skips documentation logs. The log-wrapper handling in the algorithm below is forward-compatibility only, for if lineage is later added to the log schema.
 **Related invariants:** INV-004, INV-005, INV-023.
 
 ---
@@ -57,8 +58,9 @@ These are the only value types allowed in an artifact's content after normalizat
 - **YAML timestamps / dates as native objects.** All timestamps and dates MUST be quoted strings that match the `iso8601_timestamp` / `iso8601_date` patterns in `schemas/common.schema.json`. (The YAML parser must not auto-convert them to `datetime` objects. Use `yaml.safe_load` — which respects quoting — and keep timestamps quoted in source.)
 - **YAML tags** (`!!set`, `!!binary`, custom tags). Out of scope.
 - **Non-string mapping keys** (integers, booleans as keys).
-- **Anchors and aliases** (`&foo`, `*foo`). The parser MUST resolve them before hashing; authoring artifacts with anchors is discouraged because it makes diffs harder to review.
 - **NaN, Infinity.** Would imply floats anyway; prohibited.
+
+> **Note on anchors and aliases** (`&foo`, `*foo`): these are *not* a prohibited type — YAML loaders resolve them during load, so they never appear in the loaded value tree and cannot be rejected by a post-load type check. Hashing operates on the resolved tree, so an artifact authored with anchors hashes identically to its expanded form. Authoring with anchors is nevertheless **discouraged**: it makes diffs and reviews harder to read.
 - **YAML 1.1 implicit booleans** (`yes`, `no`, `on`, `off`, `Y`, `N`). Only the literals `true` and `false` resolve to booleans. Authors MUST quote any string that looks like a YAML 1.1 boolean (e.g. `value: "no"`) so it remains a string regardless of loader version. Validators MUST reject unquoted occurrences.
 - **YAML 1.1 octal / sexagesimal numerics** (`0o17`, `01:02:03`). Only base-10 integer literals are recognized as integers; anything else MUST be a quoted string.
 
@@ -259,11 +261,19 @@ Vector A with an added top-level key `_source_path: "/tmp/somewhere.yaml"` MUST 
 
 ### Tooling
 
-- `cheddar hash <file>` — compute and display.
-- `cheddar hash <file> --update` — write the computed value back into `lineage.hash`.
-- `cheddar hash <file> --verify` — fail non-zero if stored ≠ computed.
-- Pre-commit hook MUST run `--verify` on every changed artifact.
-- CI MUST run `cheddar verify-chain` on the full artifact tree.
+Current entrypoints (these exist today and are authoritative):
+
+- `python lint/compute_hash.py <file>` — compute and display.
+- `python lint/compute_hash.py <file> --update` — write the computed value back into `lineage.hash`.
+- `python lint/compute_hash.py <file> --verify` — fail non-zero if stored ≠ computed.
+- `python lint/run_all.py --examples --strict` — full validation pipeline (CI runs this).
+- `python -m pytest tests/` — golden-vector and live-vector hash tests.
+
+Planned Tier 1 CLI equivalents (`[PLANNED]` — the shipped `cheddar` CLI currently exposes only `lint`):
+
+- `cheddar hash <file> [--update|--verify]`
+- `cheddar verify-chain <dir>`
+- Pre-commit hook running `--verify` on every changed artifact.
 
 ### Version of this spec
 
