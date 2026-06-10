@@ -1,53 +1,48 @@
 # Tests Directory
 
-**Status:** `[PLANNED]` — Structure defined, implementation pending
+**Status:** `[EXISTS]` — first tests landed; structure grows with the package
 
 ## Purpose
 
-This directory contains **pytest tests** for the Cheddar Python package, mirroring the structure of `src/cheddar/`.
+This directory contains **pytest tests** for Cheddar's tooling. Today the
+tests exercise the lint scripts directly (via a `sys.path` shim in
+`conftest.py`); when lint logic moves under `src/cheddar/` (Tier 1), the
+imports move with it.
 
-## Planned Structure
+## Current Contents
 
 ```
 tests/
 ├── README.md                    # This file
-├── conftest.py                  # Shared fixtures
-├── fixtures/                    # Test data
-│   └── artifacts/               # Example artifacts for testing
-├── test_core/
-│   ├── test_artifact.py
-│   ├── test_lineage.py
-│   └── test_schema.py
-├── test_governance/
-│   ├── test_policy.py
-│   └── test_roles.py
-├── test_lint/
-│   ├── test_validate.py
-│   ├── test_hash.py
-│   └── test_chain.py
-└── test_runtime/
-    ├── test_session.py
-    └── test_audit.py
+├── conftest.py                  # Repo paths + lint import shim
+├── test_canonical_hash.py       # Golden vectors + conformance gaps for
+│                                #   docs/canonical-serialization.md
+└── test_examples_lint.py        # Full strict lint run on schemas/examples/
 ```
 
-## Testing Philosophy
+## What the hashing tests enforce
 
-From AGENTS.md:
-- Prefer small, deterministic tests
-- Drive tests with example Cheddar artifacts stored in `fixtures/`
-- Test behavior, not implementation details
+`test_canonical_hash.py` is the executable form of
+`docs/canonical-serialization.md`:
+
+- **Vector A** — byte-exact golden hash for a minimal mission artifact
+- **Vector D** — `_`-prefixed runtime metadata is excluded from the hash
+- **Live vectors** — every stored `lineage.hash` in `schemas/examples/`
+  must verify against recomputation
+- **Tamper detection** — content changes (including `signed_by`) change
+  the hash; the stored `lineage.hash` field itself does not
+- **Conformance gaps** — Vectors B (NFC) and C (prohibited types) are
+  `xfail(strict=True)`: they document known gaps in
+  `lint/compute_hash.py` and will force marker removal the moment the
+  implementation becomes conformant
 
 ## Running Tests
 
 ```bash
+pip install pytest pyyaml jsonschema
+
 # All tests
 pytest
-
-# With coverage
-pytest --cov=cheddar --cov-report=html
-
-# Specific module
-pytest tests/test_lint/
 
 # Verbose output
 pytest -v
@@ -56,83 +51,23 @@ pytest -v
 pytest -x
 ```
 
-## Fixtures
+CI runs the same suite (see `.github/workflows/ci.yml`).
 
-Test fixtures use the canonical examples from `/schemas/examples/`:
+## Testing Philosophy
 
-```python
-# conftest.py
-import pytest
-from pathlib import Path
-import yaml
+From AGENTS.md:
+- Prefer small, deterministic tests
+- Drive tests with the canonical artifacts in `schemas/examples/`
+- Test behavior, not implementation details
 
-@pytest.fixture
-def mission_artifact():
-    path = Path(__file__).parent.parent / "schemas/examples/mission_definition.example.yaml"
-    return yaml.safe_load(path.read_text())
+## Planned Growth (with Tier 1 package work)
 
-@pytest.fixture
-def artifact_chain():
-    """Load complete artifact chain for integration tests."""
-    examples_dir = Path(__file__).parent.parent / "schemas/examples"
-    return {
-        "mission": yaml.safe_load((examples_dir / "mission_definition.example.yaml").read_text()),
-        "initiative": yaml.safe_load((examples_dir / "flow_initiative.example.yaml").read_text()),
-        "track": yaml.safe_load((examples_dir / "cheddar_track.example.yaml").read_text()),
-        "brief": yaml.safe_load((examples_dir / "automation_brief.example.yaml").read_text()),
-        "personal": yaml.safe_load((examples_dir / "personal_artifact.example.yaml").read_text()),
-    }
+```
+tests/
+├── test_core/        # artifact, lineage, schema modules
+├── test_governance/  # policy engine, roles
+└── test_runtime/     # sessions, audit logging
 ```
 
-## Test Categories
-
-### Unit Tests
-
-Test individual functions in isolation:
-
-```python
-def test_compute_hash_deterministic(mission_artifact):
-    """Hash computation should be deterministic."""
-    hash1 = compute_hash(mission_artifact)
-    hash2 = compute_hash(mission_artifact)
-    assert hash1 == hash2
-
-def test_compute_hash_excludes_hash_field(mission_artifact):
-    """Hash should not include the hash field itself."""
-    mission_artifact["lineage"]["hash"] = "old_hash"
-    hash1 = compute_hash(mission_artifact)
-    mission_artifact["lineage"]["hash"] = "new_hash"
-    hash2 = compute_hash(mission_artifact)
-    assert hash1 == hash2
-```
-
-### Integration Tests
-
-Test component interactions:
-
-```python
-def test_validate_chain_integrity(artifact_chain):
-    """Chain verification should pass for valid chain."""
-    result = verify_chain(artifact_chain)
-    assert result.valid
-    assert len(result.errors) == 0
-
-def test_policy_evaluation_blocks_prohibited(session_config, policy):
-    """Prohibited actions should be denied."""
-    action = Action(type="deploy_to_production", target="production")
-    decision = evaluate_action(action, policy)
-    assert decision == Decision.DENY
-```
-
-## Coverage Requirements
-
-- Minimum 80% line coverage for core modules
-- 100% coverage for invariant enforcement code
-- All public APIs must have tests
-
-## Next Steps
-
-1. Create `conftest.py` with shared fixtures
-2. Implement tests alongside source code
-3. Set up CI/CD test automation
-4. Add coverage reporting
+Coverage targets once the package exists: 80% line coverage minimum for
+core modules; 100% for invariant-enforcement code.

@@ -1,6 +1,8 @@
 # Governance Directory
 
-**Status:** `[REQUIRED]` — Structure defined, implementation pending
+**Status:** `[PLANNED]` — Structure defined below; no policy artifacts have been authored yet. See [§ Next Steps](#next-steps).
+
+> Per the meta-invariant ("Cheddar must never claim reality it cannot enforce"), this directory currently contains only this specification. INV-020 and INV-022 are documentary until a policy engine runtime lands (Tier 3). Do not assume governance rules are being evaluated at this time.
 
 ## Purpose
 
