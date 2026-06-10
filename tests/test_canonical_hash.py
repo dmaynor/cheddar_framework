@@ -21,7 +21,7 @@ from compute_hash import compute_hash, get_existing_hash
 from conftest import EXAMPLES_DIR
 
 VECTOR_A_YAML = """
-level: "mission_definition"
+level: "mission"
 id: "mission_test_v1"
 title: "test"
 intent: "smoke test for hashing"
@@ -36,7 +36,7 @@ lineage:
   timestamp: "2026-01-06T00:00:00Z"
 """
 
-VECTOR_A_HASH = "sha256:b830ea33b4c9d050e004bf082535cbac8cd979f1a424aae39d67ed90f4a743c1"
+VECTOR_A_HASH = "sha256:061f485b8a895c8fd3e9049533db6c36ad6e4388c072e41b79d4e285a90ec283"
 
 EXAMPLE_FILES = sorted(EXAMPLES_DIR.glob("*.yaml"))
 
@@ -93,6 +93,25 @@ def test_signing_fields_are_hash_material():
     artifact = load_vector_a()
     artifact["lineage"]["signed_by"] = "someone_else"
     assert compute_hash(artifact) != VECTOR_A_HASH
+
+
+@pytest.mark.parametrize(
+    "example", EXAMPLE_FILES, ids=lambda p: p.name
+)
+def test_package_hash_matches_lint_hash(example):
+    """Cross-implementation tripwire: if a package-level hashing module
+    exists (src/cheddar/canonical.py, introduced by the artifact
+    generator), it must produce byte-identical hashes to
+    lint/compute_hash.py on every canonical example. Skips until the
+    package module lands; fails loudly if the two implementations ever
+    drift."""
+    canonical = pytest.importorskip(
+        "cheddar.canonical",
+        reason="package hashing module not present on this branch",
+    )
+    with open(example, encoding="utf-8") as f:
+        artifact = yaml.safe_load(f)
+    assert canonical.compute_hash(artifact) == compute_hash(artifact)
 
 
 @pytest.mark.parametrize(

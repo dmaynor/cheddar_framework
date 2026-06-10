@@ -155,12 +155,14 @@ def _strip_runtime_metadata(node):
 
 def compute_hash(artifact: dict) -> str:
     content = _strip_runtime_metadata(copy.deepcopy(artifact))
-    # strip lineage.hash (standard artifacts)
-    if "lineage" in content:
+    # strip lineage.hash (standard artifacts); tolerate malformed/null blocks —
+    # schema validation, not hashing, is responsible for rejecting those
+    if isinstance(content.get("lineage"), dict):
         content["lineage"].pop("hash", None)
     # strip documentation_log.lineage.hash (log wrapper)
-    if "documentation_log" in content and "lineage" in content["documentation_log"]:
-        content["documentation_log"]["lineage"].pop("hash", None)
+    log = content.get("documentation_log")
+    if isinstance(log, dict) and isinstance(log.get("lineage"), dict):
+        log["lineage"].pop("hash", None)
 
     normalized = _normalize(content)
     canonical = json.dumps(
@@ -200,7 +202,7 @@ Reference artifacts and their expected hashes. Any implementation of this spec M
 Input (YAML):
 
 ```yaml
-level: "mission_definition"
+level: "mission"
 id: "mission_test_v1"
 title: "test"
 intent: "smoke test for hashing"
@@ -218,13 +220,13 @@ lineage:
 Canonical JSON (the bytes that get SHA-256'd):
 
 ```
-{"authorized_roles":["vp_of_engineering"],"cheddar_state":"active","id":"mission_test_v1","intent":"smoke test for hashing","level":"mission_definition","lineage":{"signed_by":"vp_of_engineering","timestamp":"2026-01-06T00:00:00Z","upstream_hash":null},"success_criteria":["hash is stable"],"title":"test"}
+{"authorized_roles":["vp_of_engineering"],"cheddar_state":"active","id":"mission_test_v1","intent":"smoke test for hashing","level":"mission","lineage":{"signed_by":"vp_of_engineering","timestamp":"2026-01-06T00:00:00Z","upstream_hash":null},"success_criteria":["hash is stable"],"title":"test"}
 ```
 
 Expected hash:
 
 ```
-sha256:b830ea33b4c9d050e004bf082535cbac8cd979f1a424aae39d67ed90f4a743c1
+sha256:061f485b8a895c8fd3e9049533db6c36ad6e4388c072e41b79d4e285a90ec283
 ```
 
 ### Vector B — NFC normalization
@@ -242,7 +244,7 @@ An artifact containing a YAML float (e.g. `canary_percentage: 0.05` instead of `
 
 ### Vector D — runtime-metadata exclusion
 
-Vector A with an added top-level key `_source_path: "/tmp/somewhere.yaml"` MUST produce **exactly the same hash** as Vector A (`sha256:b830ea33...`), because `_`-prefixed keys are excluded from hash material.
+Vector A with an added top-level key `_source_path: "/tmp/somewhere.yaml"` MUST produce **exactly the same hash** as Vector A (`sha256:061f485b...`), because `_`-prefixed keys are excluded from hash material.
 
 ---
 
