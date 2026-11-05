@@ -10,7 +10,7 @@ name = "cheddar-framework"
 version = "0.1.0-dev"
 description = "Accountability framework for AI-augmented organizations"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 requires-python = ">=3.11"
 authors = [
     {name = "David Maynor", email = "dmaynor@gmail.com"}
@@ -19,7 +19,7 @@ keywords = ["accountability", "ai", "governance", "artifacts", "lineage"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
